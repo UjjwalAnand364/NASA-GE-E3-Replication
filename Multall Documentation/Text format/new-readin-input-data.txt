@@ -1,0 +1,4598 @@
+﻿DATA INPUT FOR THE PROGRAM  
+MULTALL_OPEN USING   “NEW_READIN” 
+
+ 
+UPDATED FOR VERSION MULTALL-OPEN-17.5  .   August 2017. 
+   
+IMPORTANT NOTE.  
+ 
+MULTALL_OPEN can use either of two different input files.  
+ 
+One is closely the same as used in previous versions of MULTALL and is read by subroutine 
+OLD_READIN. The data for this is mainly formatted, which means all data values must be in 
+the correct columns and any value not present will be taken as zero. The data requirements for 
+this are described in the manual “old-readin-input-data.doc”.  
+ 
+The other is thought to be a more rational layout of the data and is read by subroutine 
+NEW_READIN. The data input for this is all free format, that means that a value must be 
+present for every number being input, if a value is not present the next value will be taken, 
+even if it is on a different line, and this will almost certainly cause an error. The details of this 
+input type are described in this manual. 
+ 
+ The program decides which form of input to use by reading a file named “intype”  which 
+contains the single character “N”  or “O”  for “new” and “old” READIN respectively. The file 
+“intype”  must be in the same directory as that from which the program is being run. 
+ 
+ All data for NEW_READIN is in Free Format  which means that there must be at least one 
+space between adjacent numbers and that all numbers in a list must be present.  If any value in 
+a list is missing then the next value will be taken, even if it is on the next line of data, and this 
+will almost certainly lead to an error.  However, many lines of data can be set by default and 
+this option is chosen replacing the appropriate line of numeric data by any alphabetic 
+character, e.g. by “D”  .  
+ 
+Each line of data is referred to as a “CARD” which is a legacy from the time when the data 
+was input on punched cards, as it was at the start of development of this program in the mid 
+‘70’s  . 
+ 
+ Many lines of data are be preceded by a comment line describing the data to be input in the 
+next line. These are included to help in identifying each line of data. These comment lines can 
+contain any alphanumeric characters but must not be more than 72 characters long. Such 
+comment lines are referred to as CARD XXdescription  in the following description of the 
+data input, so whenever CARD XXdescription  and CARD XX are called for, two lines of 
+data are required with the first line a comment line and the second line containing the required 
+data. 
+ 
+More details of the input data options are given in the section entitled NOTES, which follows 
+the end of the input data description.  
+ 
+ 
+
+
+
+CARD LIST 
+ 
+*************************************************************************** 
+ 
+CARD 1 
+ 
+ TITLE 
+ 
+   TITLE  Is a title for the run, up to 72  alphanumeric characters 
+     in length. 
+ 
+There are no defaults for this line of data. 
+*************************************************************************** 
+ 
+ 
+ 
+ 
+CARD  2description  and 2 
+ 
+ CP, GA 
+ 
+   CP  Gas specific heat capacity in J/Kg K. e.g. CP  =  
+     1005  for air .  Set any negative value to use real gas  
+     properties. 
+
+ 
+   GA  Gas specific heat ratio , e.g. = 1.4 for air. 
+
+ 
+ 
+
+The above values are chosen as defaults if this card is a single alphabetic character, e.g.  “D”. 
+************************************************************************** 
+
+
+
+ 
+ 
+
+CARD 3 This is only required if CP in the previous card was negative. 
+ 
+ CP1, CP2, CP3, TREF, RGAS 
+
+ 
+  CP1  The value of CP  at TREF in J/kg K 
+   
+  CP2  The rate of change of CP with temperature at  TREF 
+   
+     CP3  The second derivative of the variation of CP with  
+
+    temperature at TREF. 
+ 
+    TREF  The reference temperature in degrees K . 
+ 
+  RGAS  The constant value of gas constant in J/kg k. 
+
+ 
+ 
+
+The specific heat is taken to vary as:  
+ 
+Cp = Cp1 + Cp2(T −Tref ) + Cp3(T −Tref )
+
+2
+ 
+
+ 
+For combustion products typical values are  TREF = 1400, CP1 = 1272.5,  CP2  = 0.2125,  
+CP3  =  0.000015625,   RGAS = 287.5. 
+ 
+
+€  The above values are chosen as defaults if this card is a single alphabetic character, e.g.  “D”. 
+************************************************************************** 
+ 
+
+
+
+CARD  4description  and 4.  
+ 
+ ITIMST 
+
+ 
+   ITIMST defines the type of timestep to be used.  
+ 
+   = 3->  Non-uniform time steps updated as a function of Mach 
+
+    number using the basic “scree” scheme.  This is the  
+    standard option. 
+
+ 
+   = 5->   Low speed flow using an artificial speed of sound. Use 
+
+    this if the maximum Mach number is less than about 0.25. 
+    Extra data is then needed in CARD 6. 
+
+ 
+   = 6->  Fully incompressible flow with constant density. Extra 
+
+    data is then needed in CARD 7. 
+ 
+   = 4  or -4 ->The SSS scheme is used with the values of F1, F2  
+
+    and F3  input as data in card 5 . 
+ 
+
+If the values of ITIMST are  negative,  -3, -5 or -6 , then the options are as with the same 
+positive values described above, but the SSS scheme with standard coefficients is used. This 
+should allow larger CFL numbers, up to 0.75 or more, but is sometimes less robust. 
+
+ 
+ITIMST = 3 is the usual option but = -3 may allow larger CFL numbers and so give faster 
+convergence. See Note 3  for more details.  
+ 
+There are no defaults for this data. 
+************************************************************************** 
+ 
+CARD 5 Only needed if ITIMST in Card 4  was =  4 or -4 . 
+ 
+ F1, F2EFF, F3, RSMTH, NRSMTH 
+
+ 
+  F1, F2EFF, F3      Coefficients of the SSS scheme. Standard values  
+
+    are  F1= 2.0,  F2EFF = -1.0, F3 = -0.65 . 
+ 
+  RSMTH  Residual smoothing factor, Standard value = 0.4  
+  
+  NRSMTH Number of residual smoothing passes.  
+
+    Standard value= 1. 
+ 
+See Note 3 for more details of the SSS scheme. 
+ 
+There are no defaults for this data. 
+************************************************************************** 
+
+
+
+CARD 6 Only needed if ITIMST in Card 4 was = 5 or -5 . 
+ 
+ VSOUND,  RF_PTRU,  RF_VSOUND, VS_VMAX  
+ 
+  VSOUND An initial guess of the artificial speed of sound. It should 
+    be about twice the expected maximum relative velocity. It 
+    is only an initial guess and is automatically changed by the 
+    VS_VMAX ratio during the calculation. 
+    Default = 150 m/s . 
+ 
+
+  RF_PTRU  A relaxation factor on the changes in the calculated  
+  pressure. Typical value =  0.01  . 
+
+ 
+  RF_VSOUND  A relaxation factor on the changes in the calculated 
+
+  artificial speed of sound. Typical value =  0.002  . 
+ 
+ VS_VMAX The ratio of the calculated sound speed to the calculated 
+
+maximum flow speed. Typical value = 2.0  . 
+ 
+ 
+
+Defaults are as given above.  
+See Note 18  for more details of the low Mach number scheme. 
+************************************************************************** 
+
+ 
+CARD 7  Only needed if ITIMST in CARD 4 was = 6 or -6 . 
+ 
+ VSOUND, RF_VTRU,  RF_VSOUND, VS_VMAX  , DENSTY 
+ 
+ 
+  VSOUND An initial guess of the artificial speed of sound. It should 
+    be about twice the expected maximum relative velocity. It 
+    is only an initial guess and is automatically changed by the 
+    VS_VMAX ratio.  Default = 150 m/s . 
+
+ 
+  RF_VTRU A relaxation factor on the changes in the calculated  
+
+  pressure. Typical value =  0.01  . 
+ 
+
+  RF_VSOUND   A relaxation factor on the changes in the calculated
+   artificial speed of sound. Typical value =  0.002  . 
+
+ 
+  VS_VMAX The ratio of the calculated sound speed to the calculated
+
+   maximum flow speed. Typical value = 2.0  . 
+ 
+  DENSTY The fixed value of density for the incompressible flow.
+
+   The default value is  1.2 kg/m3 , a typical value for air. 
+ 
+
+The defaults are as given above . 
+See Note 18 for more details of the low Mach number scheme. 
+*************************************************************************** 
+
+
+
+CARD 8description  and  8 
+ 
+ CFL, DAMPIN, MACHLIM, F_PDOWN 
+ 
+
+  CFL   The CFL number which determines the length of time 
+     step. Standard vale = 0.4 for the Scree scheme but higher 
+     values up to 0.75 may be possible with the SSS scheme. 
+
+ 
+  DAMPIN      The damping factor which limits the ratio of  
+
+     maximum change to the average change per time  
+     step. Standard value = 10.0  . Higher values, e.g.  
+     25.0, may give faster convergence but are less stable.
+  
+
+ 
+  MACHLIM The maximum relative Mach number is limited to  
+
+     this value. Typical value = 2.0 . The calculation should not 
+     fail but may not converge fully if the maximum Mach 
+     number exceeds this value. 
+
+ 
+  F_PDOWN   The pressure may be downwinded to prevent  
+
+     overshoots and undershoots at strong shock  
+     waves.  Standard value = 0.0 but set = 0.1 if more shock 
+     smearing is required. 
+
+ 
+ 
+
+Defaults are as given above. 
+ 
+See Notes 3  and 5  for more details . 
+*************************************************************************** 
+ 
+CARD 9description  and 9 
+
+ 
+  IF_RESTART  
+ 
+  IF_RESTART If  = 0 then start the calculation from an initial guess of 
+
+     the flow field 
+ 
+  IF_RESTART If  = 1    then start the calculation from a previous solution 
+
+      which has been saved in a file named   “flow_out” . 
+     
+
+ 
+Default is  IF_RESTART = 0. 
+ 
+Starting from a restart file should give faster convergence. 
+ 
+Note that the file  “flow_out” is always written when convergence or maximum iterations are 
+reached and is also used as the plotting file. 
+*************************************************************************** 
+ 
+
+
+
+CARD 10description  and 10 
+ 
+ NSTEPS_MAX,  CONLIM 
+
+ 
+  NSTEPS_MAX  The maximum number of time steps   
+
+    before the calculation will be stopped. The value  
+    depends on the case but 3000 is usually enough  
+    for a single blade row, 5000 for a single stage and  
+    up to 10000 for a multistage calculation. More  
+    than 10000 time steps should never be needed. 
+
+ 
+  CONLIM   The convergence level defined as the average  
+
+     percentage change in velocity per time step divided by 
+     the RMS velocity of all grid points. Typical value = 0.005 
+.  
+Note that CONLIM is the percentage change so the usual convergence limit is very tight. 
+
+ 
+Defaults are  NSTEPS_MAX = 5000, CONLIM = 0.005  
+*************************************************************************** 
+ 
+CARD 11description  and 11 
+
+ 
+ SFXIN,  SFTIN, FAC_4TH,  NCHANGE 
+
+ 
+ SFXIN  The smoothing factor in the streamwise (J) direction. 
+
+Standard value =0.005 . 
+ 
+  
+  SFTIN  The smoothing factor in the pitchwise (I) and spanwise 
+
+     (K) directions. Standard value =0.005 . 
+ 
+  FAC_4TH The proportion of fourth order smoothing.  The second 
+
+     order smoothing used is (1-FAC_4th) x SFXIN  and the 
+     fourth order smoothing used is FAC_4th*SFXIN . 
+     The same for SFTIN. Typical value = 0.8 . 
+
+ 
+  NCHANGE The smoothing factors and damping are increased  
+
+     at the start of the calculation and are gradually decreased 
+     to the values set above over NCHANGE steps.  
+     Typical value = NSTEPS_MAX/4 . 
+
+ 
+ 
+
+Defaults values are  as given above. 
+*************************************************************************** 
+ 
+
+
+
+CARD  12description and 12  
+  
+ NROWS 
+ 
+
+   NROWS The number of blade rows to be calculated. The  
+   limit is only imposed by the dimensioning of the program. 
+
+     The current limit is 26.  Edit “commall-open“ if  
+    this needs to be increased. 
+
+ 
+ 
+
+There is no default value for this data since NROWS will vary from case to case. 
+*************************************************************************** 
+ 
+CARD 13description and 13 
+ 
+ IM , KM 
+ 
+
+   IM  The number of grid points in the pitchwise direction. This 
+   is the same for all blade rows. A typical value = 46. Fewer 
+   points, e.g. 28, will give faster run times, more points 
+   e.g. 64, will give greater accuracy. The current limit as set 
+   by the dimensions of “commall-open” is 83. 
+
+ 
+   KM  The number of grid points in the spanwise direction. This 
+
+    is the same for all blade rows. A typical value = 46. Fewer 
+    points, e.g. 28, will give faster run times , more points 
+    e.g. 64, will give greater accuracy. The current limit as set 
+    by the dimensions of  “commall-open” is 83.  
+
+ 
+ 
+
+There are no default values for these two numbers since they will vary from case to case. 
+*************************************************************************** 
+
+ 
+
+
+
+CARD 14description   and 14 
+ 
+  FP(I), for  I = 1,IM-1   
+ 
+   FP(I),   I=1 to IM-1 FP(I)  are the relative grid spacings in  
+
+   the pitchwise direction.  IM-1 values must be input.  If 
+   FP(3)  is set to zero then the spacings are generated  
+   automatically as a geometric progression with expansion 
+   ratio FP(1)  and maximum spacing ratio = FP(2) . These 
+   are applied away from both blade surfaces.  Typical values 
+   are FP(1) = 1.25, FP(2) = 10.0 , FP(3) = 0.0.   All the 
+   remaining  IM-4  values must still be input but they are 
+   not used.  
+
+ 
+ 
+
+Note that these are the relative spacings so that only their ratios matter, their absolute values 
+do not matter.  A higher expansion ratio and a larger ratio of maximum to minimum spacing 
+will give more grid points in the boundary layers. However, it is recommended that the 
+expansion ratio should not be greater than 1.3  as large values will generate numerical errors. 
+ 
+It is usually more convenient to use the option to generate the spacings automatically but data 
+must still be input for the  IM-4 points that will not be used. 
+
+ 
+There are no defaults for this data. 
+*************************************************************************** 
+CARD 15description and 15 
+
+ 
+    FR(K), for K = 1,KM-1 
+ 
+   FR(K),   K=1 to KM-1      FR(K) are the relative grid spacings in the  
+
+   spanwise direction.  KM-1 values must be input.  If FR(3)  
+   is set to zero then the spacings are generated automatically 
+   as a geometric progression with expansion ratio FR(1)  
+   and maximum spacing ratio = FR(2) . These are applied 
+   away from both endwalls.  Typical values are FR(1) = 
+   1.25, FR(2) = 10.0 , FR(3) = 0.0 .   All the remaining  
+   KM-4 values must still be input but they are not used.  
+
+ 
+Note that these are the relative spacings so that only their ratios matter, their absolute values 
+do not matter.  A higher expansion ratio and a larger ratio of maximum to minimum spacing 
+will give more grid points in the boundary layers. However, it is recommended that the 
+expansion ratio should not be greater than 1.3  as large values will generate numerical errors. 
+ 
+It is usually more convenient to use the option to generate the spacings automatically but data 
+must still be input for the  KM-4 points that will not be used. 
+ 
+The spacings are automatically adjusted to accommodate the specified tip gaps. 
+ 
+There are no defaults for this data. 
+*************************************************************************** 
+
+
+
+ 
+CARD 16description and 16 
+
+ 
+ IR, JR, KR, IRBB, JRBB, KRBB 
+
+ 
+  IR    The block size of the smallest multigrid blocks in the I 
+
+     direction. Typically IR = 3 .  Set IR = 1  if performing a 
+     throughflow calculation. 
+
+ 
+  JR  The block size of the smallest multigrid blocks in the J 
+
+   direction. Typically JR = 3. 
+ 
+  KR The block size of the smallest multigrid blocks in the K 
+
+   direction. Typically KR = 3. Set KR = 1 if performing a 
+  quasi-3D blade –to-blade calculation. 
+
+ 
+  IRBB  The block size of the second level of multigrid blocks in 
+
+   the J direction. Typically IRBB = 9. Set = 1 if IR = 1. 
+ 
+  JRBB  The block size of the second level of multigrid blocks in 
+
+   the J direction. Typically JRBB = 9. 
+ 
+  KRBB  The block size of the second level of multigrid blocks in 
+
+   the K direction. Typically KRBB = 9. Set = 1 if KR = 1. 
+ 
+ 
+
+The default values are the typical ones given above. However, there is no need to use these 
+exact values. Larger block sizes may give faster convergence but are more likely to need 
+lower safety factors, see card 17. 
+ 
+It is desirable, but not essential, that there are a whole number of blocks across the pitch and 
+span. So, if IR = 3  and IRBB = 9, good values for IM  would be 19, 28, 37, 46, 55, and 65 . 
+Similarly for KM.  
+ 
+If IM was = 2  to specify a throughflow calculation, then IR and IRBB must = 1. 
+ 
+If KM was = 2 to specify a Q3D blade-to-blade calculation, then KR and KRBB must = 1. 
+ 
+In addition to these two block sizes there is a third level of multigrid for which the blocks 
+cover the whole span and whole pitch with one block upstream of the leading edge, 2 blocks 
+within the blade passage, and one block downstream of the trailing edge. i.e. only 4 blocks 
+per blade row. These “superblocks” are generated automatically with no user input. 
+ 
+The default values are as given above. 
+*************************************************************************** 
+ 
+
+
+
+CARD 17description  and 17 
+ 
+
+ FBLK1, FBLK2, FBLK3 
+ 
+
+  FBLK1 The safety factor on the time step length for the first level 
+   of multigrid blocks.  Typical value = 0.4 . 
+
+ 
+    FBLK2  The safety factor on the time step length for the second 
+
+    level of multigrid blocks. Typical value = 0.2 . 
+ 
+  FBLK3 The safety factor on the time step length for the third level 
+
+   of multigrid blocks, Typical value = 0.1. 
+ 
+ 
+
+These safety factors are the ratio of the CFL number used for the block to the theoretical 
+limiting value. The defaults are the values suggested above.  Larger values will give faster 
+convergence but may lead to instability. 
+*************************************************************************** 
+
+ 
+ 
+ 
+ 
+
+CARD 18description  and 18 
+ 
+ IFMIX 
+
+ 
+  IFMIX    Set IFMIX= 1 if a mixing plane is to be used. Set = 0 if 
+
+   there is no mixing plane. 
+ 
+
+The default is IFMIX = 1. It is very unlikely that a mixing plane will not be used when there 
+is more than one blade row. 
+************************************************************************** 
+ 
+
+
+
+CARD 19description and 19 .   Only needed if IFMIX (card 18) is not 0 . 
+ 
+ RFMIX, FEXTRAP, FSMTHB, FANGLE 
+ 
+
+ RFMIX  The relaxation factor on the isentropic forcing downstream 
+of the mixing plane. Typical value = 0.025 , reduce this if 
+there is any sign of instability at the mixing plane. 
+
+ 
+   FEXTRAP The factor by which the flux is extrapolated from  
+
+    upstream of the mixing plane to the mixing plane.  
+     Typical  value = 0.8 but use a larger value for close grid 
+
+    spacings. 
+ 
+   FSMTHB The factor scaling the special smoothing   
+
+    upstream and downstream of the mixing plane. Typical 
+    value 1.0 . 
+
+ 
+  FANGLE The factor by which the flow direction is extrapolated 
+
+  from downstream to the mixing plane.   
+  Typical value = 0.8 but use a larger value for closer grid 
+   spacings. 
+
+ 
+See Note  17 for more details of the mixing plane treatment. Use larger values of FEXTRAP  
+and FANGLE, e.g.  0.95,  if the streamwise grid spacing is very small at the mixing plane.  
+The value of FSMTHB does not seem to be very important.  
+ 
+The default values are those given above. 
+************************************************************************** 
+ 
+CARD 20description  and 20 
+ 
+
+IFCOOL, IFBLEED, IF_ROUGH 
+ 
+
+  IF COOL Set = 1  if any cooling flows are to be included on  
+   any blade row. Set = 0  if there are no cooling flows. 
+   Default = 0 . 
+
+ 
+  IF BLEED Set = 1 if there are bleed flows from the hub or  
+
+   casing of any blade row. Set = 0  if there are no bleed 
+   flows. Default = 0 . 
+
+ 
+  IF_ROUGH Set = 1 if any surface of any blade row is to be treated as 
+
+  rough.  Set = 0 if all surfaces of all blade rows are  
+  smooth. Default = 0. 
+
+ 
+ 
+
+Defaults are as given above. Further input is needed later in Cards 86 and in the sections 
+entitled   COOLING FLOWS and BLEED FLOWS at the end of the input data if any of these 
+are non-zero. 
+*************************************************************************** 
+
+
+
+CARD 21description  and 21 
+ 
+
+NSECS_IN 
+ 
+
+  NSECS_IN  The number of quasi stream surfaces on to which  
+   the input blade geometry will be interpolated. This is the 
+  same for all blade rows. The interpolation is done  
+  before generating the final grid. NSECS_IN is usually the 
+  same as the number of input stream surfaces,  
+  (NSECS_ROW,  Card 51) but they need not be the same. 
+
+ 
+ 
+
+If the number of input stream surfaces is not the same for all blade rows then set NSECS_IN 
+equal to the largest number of input surfaces. It is usually more convenient to have 
+NSECS_IN  = NSECS_ROW and with the same value for all blade rows. 
+  
+Note that there is no default value for this data. 
+*************************************************************************** 
+ 
+
+
+
+CARD 22description  and 22 
+ 
+
+IN_PRESS, IN_VTAN, IN_VR, IN_FLOW, IF_REPEAT, RFIN 
+ 
+
+ IN_PRESS Determines how the pressure is extrapolated to the inlet 
+boundary. Usual value = 0 so the pressure is calculated 
+from the density which is solved for by the continuity 
+equation. If =1 the inlet pressure is extrapolated from the 
+interior flow field. If = 3 the pitchwise averaged pressure 
+is extrapolated. If = 4 the passage average pressure is 
+extrapolated. See Note 1 for more details. 
+
+ 
+   IN_VTAN Determines the boundary condition on the inlet  
+
+    tangential velocity or flow angle. Set = 0 if the absolute 
+    flow angle is fixed, set = 2 if the relative flow angle is 
+    fixed, set = 1 if the absolute tangential velocity is fixed. 
+    See Note 1 for more details. 
+
+ 
+   IN_VR  Determines the boundary condition on the inlet  
+
+    radial velocity. Set  = 0 if it is extrapolated from the  
+    downstream flow field. Set = 1 if the radial velocity is 
+    determined by a fixed meridional pitch angle which is 
+    input in Card 81. If IN_VR = 1 the pitch angle specified 
+    must be  compatible with the slopes of the hub and casing 
+    at inlet. 
+
+ 
+   IN_FLOW Determines whether to try to force a specified  
+
+    mass flow rate. Set = 0 if no mass flow forcing. Set = 2  to 
+    force the local flow towards the current average flow. Set 
+    = 3 to force the flow towards an input value which is input 
+    in Card 26. See Note 11 . 
+
+     This option is seldom used so the usual value = 0. 
+ 
+
+IF_REPEAT Determines whether to force a repeating stage condition at 
+the inlet boundary.  Set = 0  for no repeat condition, which 
+is most usual. Set = 1 to use the repeating flow condition 
+in which case extra data will be read in Card 27 . 
+
+ 
+  RFIN The relaxation factor on changes in the inlet pressure. The 
+
+   value depends on the choice of IN_PRESS. If  IN_PRESS 
+   = 0 then set = 0.5.  For other choices of IN_PRESS set = 
+   0.1. Reduce if there are any signs of instability at the inlet 
+   boundary. See note 1 for more details. 
+
+ 
+ 
+
+The defaults values are:  IN_PRESS = 0, IN_VTAN = 0, IN_VR = 1, IN_FLOW = 0, 
+IF_REPEAT = 0, RFIN = 0.5  . 
+*************************************************************************** 
+ 
+
+
+
+CARD 23description  and 23 
+ 
+ IPOUT,  SFEXIT,  NSFEXIT 
+
+ 
+ IPOUT  Determines the boundary condition on the exit static 
+
+pressure. IPOUT = 0 means that the pressure is fixed as 
+PDHUB on the hub and simple radial equilibrium is 
+imposed. IPOUT =  -1  means the pressure is fixed as 
+PDTIP on the casing and simple radial equilibrium is 
+imposed. IPOUT = +1 means the exit pressure is fixed at 
+all spanwise positions with a linear variation between the 
+input values PDHUB  and PDTIP.  IPOUT = +3  means 
+that the spanwise exit pressure variation is read in as data 
+in Card 76 . 
+
+ 
+ 
+ SFEXIT A factor for smoothing the exit flow field. If SFEXIT is 
+
+not zero this is smoothed in both the pitchwise and 
+spanwise directions. It is usually only used when there is 
+instability due to the flow trying to reverse at the exit 
+boundary in which case set SFEXIT = 0.1  and NSFEXIT 
+= 5 -> 10. Increase these to apply a more powerful 
+smoothing. Most usually SFEXIT = 0.0 . 
+
+ 
+ NSFEXIT The smoothing is applied over NSFEXIT points upstream 
+
+of the exit boundary. Typically = 5  but increase it to apply 
+a more powerful smoothing over more mesh points. 
+
+ 
+ 
+Defaults are  IPOUT = 1, SFEXIT = 0.0, NSFEXIT = 0 . 
+ 
+See Note 2 for more details of how IPOUT is used. 
+ 
+************************************************************************** 
+
+ 
+
+
+
+CARD 24description  and 24 
+ 
+
+  PLATE_LOSS, THROTTLE_EXIT 
+ 
+  PLATE_LOSS The loss coefficient of a simulated perforated plate or wire 
+
+mesh screen at the exit boundary. This may be used to 
+make the exit flow more uniform if there is a tendency for 
+it to reverse at exit. It works by increasing the static 
+pressure upstream of the simulated plate by 
+PLATE_LOSS x (  ρ V 2
+
+m - (ρ V 2
+m  )mid ) .  A value = 2.0  
+
+should make a non-uniform flow closely uniform.  The 
+use of SFEXIT is usually a better way of preventing 
+reverse flows and so this option is not usually needed, 
+hence PLATE_LOSS usually = 0.0 . 
+
+ 
+ 
+  THROTTLE_EXIT Simulates a throttle downstream of the calculated 
+
+region. The exit pressure is made to vary with exit mass 
+flow rate so it lies on a parabolic curve passing through 
+THROTTLE_PRES and THROTTLE_MAS both of 
+which are input in the next card. This is useful for 
+calculations on compressors near their stall point. The 
+solution found should lie at the intersection of the 
+compressor’s static pressure to mass flow characteristic 
+and the parabolic curve through these points. Set 
+THROTTLE_EXIT = 1.0  to use this option. Set = 0.0 if 
+this option is not used as is most usual unless near the stall 
+point. 
+
+ 
+Defaults are PLATE_LOSS = 0, THROTTLE_EXIT = 0   so the option is not used . 
+*************************************************************************** 
+ 
+CARD 25 .  
+This card is only needed if THROTTLE_EXIT in Card 24 is not zero.  
+ 
+ THROTTLE_PRES,  THROTTLE_MAS,  RF_THROTL 
+
+ 
+ THROTTLE_PRES The exit pressure is made to vary with exit mass 
+
+flow rate along a parabolic curve passing through the point 
+THROTTLE_PRESS and THROTTLE_MAS .  In  N/m2   .  
+
+ 
+ THROTTLE_MAS  The mass flow at the point where the exit 
+
+pressure is THROTTLE_PRES .  In Kg/s . 
+ 
+ RF_THROTL  A relaxation factor on changes in exit pressure when using 
+
+this option. Typical value = 0.1  . 
+ 
+
+See Card 24 for details of this option. There are no defaults for this card. 
+*************************************************************************** 
+
+
+
+CARD 26description  and 26 . 
+ 
+  This card is only needed in  IN_FLOW in card 22 is not zero . 
+ 
+ FLOWIN, RFLOW 
+ 
+ 
+
+ FLOWIN The required mass flow rate in Kg/s .  This is only used 
+when IN_FLOW =  3. 
+
+ 
+ 
+ RFLOW  A relaxation factor on the mass flow forcing. Typical 
+
+value = 0.1  . 
+ 
+ 
+
+There are no defaults for this card.  It is very seldom used because IN_FLOW is usually set to 
+zero. 
+*************************************************************************** 
+
+ 
+ 
+ 
+ 
+
+CARD 27description  and 27.  
+ 
+ Only needed if  IF_REPEAT  in card 23  is  not zero. 
+
+ 
+ NINMOD, RFINBC 
+ 
+  NINMOD The inlet boundary conditions are moved towards the 
+
+repeating stage condition every NINMOD steps. Typically 
+NINMOD =  10. 
+
+ 
+  RFINBC A relaxation factor on the changes in inlet boundary 
+
+conditions. Typical value = 0.025 .  Reduce this if there 
+are any signs of instability at the inlet boundary. 
+
+ 
+ 
+Default values are as given above. 
+*************************************************************************** 
+ 
+ 
+
+
+
+CARD 28description  and 28 . 
+ 
+ ILOS, NLOS, IBOUND 
+ 
+  ILOS  Determines which viscous model will be used. 
+    Set = 0  for an inviscid calculation. 
+
+Set = 10 to use the original mixing length model, 
+subroutine LOSS. 
+Set  = 100 to use the newer mixing length model, 
+subroutine NEW_LOSS . 
+Set = 200 to use the Spalart-Almaras turbulence model, 
+subroutine SPAL_LOSS . 
+Generally ILOS = 100 is preferred.  
+
+ 
+NLOS The loss subroutine is called every NLOS time steps. 
+
+Usually NLOS = 5 , lower values may be more stable but 
+will run more slowly, higher values may be less stable but 
+faster.  It is seldom necessary to change the value from 5 . 
+
+ 
+IBOUND Determines whether the endwalls will be treated as 
+
+viscous or inviscid. If IBOUND = 0, both walls are 
+viscous. IBOUND = 1 makes the hub inviscid, IBOUND 
+= 2 makes the casing inviscid, IBOUND = 3 makes both 
+endwalls inviscid. 
+
+  Usually set IBOUND = 0 . 
+ 
+
+Defaults are ILOS = 100, NLOS = 5, IBOUND = 0 . 
+*************************************************************************** 
+ 
+
+
+
+CARD 29description  and 29.  
+ 
+   Only needed if ILOS  in card 28 is not zero. 
+ 
+
+REYNO, RF_VIS, FTRANS, TURBVIS_LIM, PRANDTL,YPLUSWALL  
+ 
+ REYNO  If REYNO is greater than 100 it is the Reynolds number 
+
+of the flow based on the axial chord and the exit relative 
+velocity of the first blade row. This is used to calculate the 
+dynamic viscosity. 
+
+   If REYNO is positive but less than 100 then REYNO = 
+(dynamic viscosity x 105).  
+
+  If REYNO is negative then Abs(REYNO) x 10 -5   is the 
+dynamic viscosity at a temperature of  T = 288K  and it 
+varies as  (T/288)0.62  which is a good approximation for 
+air. 
+
+ 
+ RF_VIS A relaxation factor on the changes in viscous forces. Usual 
+
+value = 0.5  and it is seldom necessary to change this.  
+ 
+ FTRANS A very simple boundary layer transition criterion. The 
+
+flow is taken to be fully turbulent if the ratio of the 
+maximum calculated turbulent viscosity to laminar 
+viscosity is greater than FTRANS. Set FTRANS = 14 to 
+use this model. However it is not considered very reliable 
+and usually set FTRANS = 0.0 to obtain fully turbulent 
+flow or set FTRANS = 10000. to obtain fully laminar 
+flow. 
+
+ 
+ TURBVIS_LIM The maximum allowed value of turbulent viscosity is 
+
+TURBVIS_LIM x the laminar viscosity. Usually set 
+TURBVIS_LIM = 1000 but higher values, up to 3000, 
+may be necessary in multistage machines 
+
+ 
+ PRANDTL The Prandtl number of the fluid. Usually set = 1.0. 
+ 
+ YPLUSWALL If this is greater than 5 then the wall shear stresses are 
+
+obtained by assuming that the first grid point is at the 
+given value of YPLUS and the original wall functions are 
+not used. If this is done a typical value of YPLUSWALL = 
+11 .  However, this option is not preferred and usually set 
+YPLUSWALL = 0.0 to obtain the wall shear stresses from 
+the wall functions.  
+
+  In Version 10.5 YPLUSWALL can be used to choose the 
+Shih et al wall functions. If its value is between -10.0  and 
+zero then only the velocity term in these functions is used. 
+This gives results very similar to the original wall 
+function. If its value is less than -10.0 then both the 
+velocity and pressure terms in the Shih et al wall functions 
+are used. The author is dubious of the value of this. 
+
+
+
+ 
+ 
+ 
+
+Defaults are:  REYNO = 500,000 , RF_VIS = 0.5,  FTRANS = 0.0,  PRANDTL = 1.0 , 
+YPLUSWALL = 0.0,  TURBVIS_LIM = 3000. 
+
+*************************************************************************** 
+ 
+CARD  30description  and 30  
+ 
+This card is only needed if ILOS = 200,  i.e.  if the Spalart-Allmaras (S-A) 
+turbulence model is being used. 
+ 
+
+FAC_STMIX, FAC_ST0, FAC_ST1, FAC_ST2, FAC_ST3, FAC_SFVIS, 
+FAC_VORT,   FAC_PGRAD 
+
+ 
+ FAC_STMIX A factor which moves the turbulent viscosity calculated by 
+
+the S-A model towards the mixing length value obtained 
+from NEW_LOSS. Set = 1.0 to use this but usually set = 
+0.0 . 
+
+ 
+ FAC_ST0 A scaling factor on the first source term in the S-A model. 
+
+Standard value = 1.0   but  1.5 is sometimes found to give 
+better results. 
+
+ 
+ FAC_ST1 A scaling factor on the second source term in the S-A 
+
+model. Standard value = 1.0  . 
+ 
+
+ FAC_ST2  A scaling factor on the second source term in the S-A 
+model. Standard value = 1.0  . 
+
+ 
+ FAC_ST3 A scaling factor on the third source term in the S-A model. 
+
+Standard value = 1.0  . 
+ 
+ FAC_SFVIS A factor which may be used to increase the smoothing of 
+
+the turbulent viscosity calculated by the S-A model. Usual 
+value = 2.0 . Higher values are seldom necessary. 
+
+ 
+ FAC_VORT This is new to version 17.5. It allows the main source term 
+
+for turbulent viscosity to be increased by streamwise 
+vorticity as suggested by Lee et al in ASME GT2017-
+63245 . The increase is limited to (1 + FAC_VORT) x the 
+original source term. Lee et al suggest a value = 0.9191 for 
+FAC_VORT. The default value = 1.0 . So far there is little 
+experience of using this option. 
+
+
+
+ 
+ FAC_PGRAD This is also new to version 17.5. The main source term for 
+
+turbulent viscosity is increased by adverse pressure 
+gradients, again as suggested by Lee et al. The increase is 
+limit to (1 + FAC_PGRAD) x the original term. Lee et al 
+suggest a value of 0.6565 for FAC_PGRAD. The default 
+value = 1.0 . So far there is little experience of using this 
+option. Both FAC_VORT and FAC_PGRAD can be used 
+together to increase the source term by their product. 
+
+The defaults are as given above. 
+*************************************************************************** 
+CARD 31description  and 31. 
+ 
+
+YPLAM,  YPTURB 
+ 
+
+  YPLAM  Is the value of YPLUS below which the 
+  boundary layer is taken to be fully laminar. The usual 
+
+value = 5.0 . 
+ 
+ YPTURB  Is the value of YPLUS above which the flow is taken to be 
+
+fully turbulent. Usual value = 25.0  . 
+ 
+
+Defaults are as given above.  Between these values the viscosity is blended between the 
+laminar and the calculated turbulent value. These values are only used when there are grid 
+points within the laminar sub layer, YPLUS < 25 ,  otherwise the flow is taken to be fully 
+turbulent or fully laminar as determined by FTRANS . 
+*************************************************************************** 
+CARD32description and 32 
+ 
+Only needed if IM = 2 to specify a throughflow calculation. 
+
+ 
+  Q3DFORCE, SFPBLD, NSFPBLD 
+ 
+  Q3DFORCE A factor scaling the force applied via the blade surface 
+
+    pressure distribution to keep the flow on the stream  
+    surface. Usually set = 1.0  but often higher values,  
+    sometimes up to 5, can be used and give faster  
+    convergence. 
+
+ 
+  SFPBLD The blade surface pressures are smoothed by SFPBLD. 
+
+    Typical value = 0.1. This high smoothing greatly helps to 
+    obtain realistic pressure distributions and improves  
+    convergence. 
+
+ 
+  NSFPBLD The smoothing is applied NSFPBLD times. Typical value 
+
+    = 2. But increase to apply more powerful smoothing. 
+Defaults are as given above. 
+
+ See Note 20 for details of the throughflow method. 
+*************************************************************************** 
+
+
+
+CARD 33description  and 33 
+ 
+ ISHIFT,  NEXTRAP_LE, NEXTRAP_TE 
+ 
+
+ISHIFT Determines the type of grid matching between adjacent 
+blade rows.  
+
+ If ISHIFT =  0, the grids input are not changed. 
+ If ISHIFT  = 1 the blade rows are moved axially so that 
+
+the grids coincide at the mixing plane on the hub. 
+ If ISHIFT = 2  the grids are moved so that they coincide at 
+
+the mixing plane over the whole span and maintain the 
+input stream surfaces.  
+
+ ISHIFT = 3  is the same as 2 but makes the grid surfaces 
+conical in the blade to blade gap.  
+
+ ISHIFT = 4  is the same as 3 but do not change the hub 
+and casing grid surfaces.   
+
+ ISHIFT = 2  is usual and is strongly preferred. 
+ 
+NEXTRAP_LE If the grid direction upstream and downstream of a blade 
+
+row is obtained by extrapolating the blade centre line then 
+NEXTRAP_LE is the number of the grid points 
+downstream of the leading edge of the point that is used 
+for the extrapolation.  Typical value = 10 . 
+
+ 
+NEXTRAP_TE If the grid direction upstream and downstream of a blade 
+
+row is obtained by extrapolating the blade centre line then 
+NEXTRAP_TE is the number of the grid points upstream 
+of the trailing edge of the point that is used for the 
+extrapolation. Typical value = 10 . 
+
+ 
+ 
+
+The defaults are ISHIFT = 2 (which is strongly preferred), NEXTRAP_LE = NEXTRAP_TE 
+= 10 .  
+ 
+ NEXTAP_LE  and NEXTRAP_TE are not used if IF_ANGLES(NR) =1  but values must 
+still be input. 
+ 
+ See note 12 for more details of the grid matching at the mixing plane. 
+*************************************************************************** 
+ 
+CARD 34description  and 34 
+ 
+
+NSTAGE(N), N=1, NROWS 
+ 
+ NSTAGE(N)  Is the stage number of the Nth blade row. 
+ 
+There are no defaults for this card as there is no general method of deciding which blade row 
+belongs to which stage. If there is an IGV in front of a compressor stage, or an OGV at exit 
+from a turbine stage,  then that stage should have 3 blade rows. 
+*************************************************************************** 
+
+
+
+ 
+CARD 35description  and  35 . 
+ 
+
+  NOUT(N) , N = 1 to 5 
+ 
+  NOUT(N) Five values of time step number (NSTEP)  at  
+
+   which an output file “flow_out” will be written. 
+ 
+ 
+
+This is mainly used when debugging a failed solution when several values of NOUT(N) 
+would be set to give outputs just before failure.  
+ 
+If NOUT(1) is set to zero (0) then the initial guess of the flow field is sent to the plotting file 
+“flow_out”. This is very helpful in finding errors in the data which cause the program to fail 
+on the first iteration. 
+ 
+Setting all NOUT by one large number, e.g.  9999999999999999999999999999,  may cause 
+errors on some compilers and so should be avoided. 
+ 
+An output file is always written at  N = NMAX   or when the convergence limit is reached. 
+ 
+The default is that all NOUT(N)  > NMAX so it is not used. 
+*************************************************************************** 
+ 
+
+
+
+CARD 36description  and 36. 
+ 
+ IOUT(I) , I = 1, 13 
+ 
+  IOUT(I)  The value of IOUT determines which variables are to be 
+    written to the output file “results.out”. 
+     If  IOUT(I) = 0, do not write out the Nth variable. 
+     If  IOUT(I) = 1 write out the variable on the pitchwise 
+    grid lines determined by KOUT(K) which is input in the 
+    next card.  
+    If IOUT(I) = 2 write out a pitchwise mass averaged value 
+    of the variable on the grid lines determined by KOUT(K). 
+    The variables are numbered as shown below.  
+ 
+The variables are numbered as follows :  
+ 
+  1 =    Percentage change in meridional velocity. 
+  2 = Axial velocity 
+  3 = Absolute swirl velocity 
+  4 = Radial velocity 
+  5 = Static pressure 
+  6 = Relative Mach number 
+  7 = Absolute stagnation temperature 
+  8 = Meridional velocity 
+  9 = Swirl angle tan-1(Wq/Vm). 
+  10 = Meridional pitch angle tan-1(Vr/Vm) 
+  11 = Density 
+            12 = Ratio of P/ T**(γ/(γ-1)) to the inlet value at mid span and 
+    mid pitch. This should =1.0 for isentropic flow and can be 
+    thought of as the ratio of the local stagnation pressure to 
+    that that would be obtained in an insentropic  process. 
+  13 = Pressure coefficient (P-PIN)/(P01-PIN) 
+ 
+This option is mainly used for debugging as the files are likely to be too large for visual 
+inspection. The usual choice is to set all IOUT(I) = 0 so no output to “results.out” is obtained. 
+This option can be used in conjunction with KOUT in the next card to limit the amount of 
+output.   
+ 
+The default is that all IOUT(I) = 0  so there is no output to “results.out” . 
+*************************************************************************** 
+ 
+
+
+
+CARD 37description  and 37.  
+ 
+ KOUT(K), K = 1,KM 
+ 
+
+  KOUT(K) KOUT is used to decide on which spanwise (K) grid lines 
+    to write output to the file “results.out”. 
+
+     Write output for this K value if KOUT(K) = 1. 
+     Do not write if KOUT(K) = 0 . 
+
+ 
+The default is that all KOUT(K) = 0  so that there is no output to “results.out”. 
+ 
+ 
+ 
+*************************************************************************** 
+*************************************************************************** 
+
+End of the data which does not depend on the blade row. The 
+following data must be input separately for every row. 
+
+*************************************************************************** 
+*************************************************************************** 
+
+
+
+*************************************************************************** 
+*************************************************************************** 
+
+START OF THE DATA INPUT FOR EACH BLADE ROW.  
+RETURN TO THIS POINT AFTER COMPLETING THE DATA FOR 
+
+ALL BUT THE LAST BLADE ROW. 
+*************************************************************************** 
+*************************************************************************** 
+CARD  38 
+ 
+BLANK CARD This is just used to space out the data. 
+*************************************************************************** 
+CARD 39 . 
+ 
+BLANK CARD This is just used to space out the data. 
+*************************************************************************** 
+CARD 40 . 
+ 
+ ROWTYP 
+ 
+
+ROWTYP An alphabetic description of the next blade row. e.g.  
+“ROTOR 1 “ .  
+
+ 
+*************************************************************************** 
+
+ 
+CARD 41description and 41 . 
+ 
+ NBLADES_IN_ROW 
+ 
+
+  NBLADES_IN_ROW The number of blades in the blade row. 
+ 
+
+There is no default value for this card. 
+*************************************************************************** 
+ 
+CARD 42description  and 42 . 
+ 
+
+JMROW, JLEROW, JTEROW 
+ 
+
+JMROW The number of streamwise (J index) grid points at which 
+the geometry of the row will be input. The value is the 
+same for all stream surfaces used for input. 
+
+ 
+JLEROW The number of the leading edge grid point. 
+ 
+JTEROW The number of the trailing edge grid point. 
+ 
+
+Note that  JLEROW and JTEROW  are measured relative to the start of this row, not the start 
+of the whole machine.  
+ 
+There are no default values for this data.  
+
+
+
+*************************************************************************** 
+CARD 43description  and 43 . 
+ 
+
+KTIPS, KTIPE  
+ 
+
+KTIPS The value of the spanwise grid point (K index) at the start 
+of any tip leakage gap. For a hub gap set KTIPS = 1,  for a 
+tip gap set KTIPS equal to the last grid point on the solid 
+blade. Set =  0 if no hub or tip leakage. 
+
+  Set  KTIPS to a negative number to model a shrouded tip 
+ seal in which case extra data input is needed in CARDS 
+
+SHRD1 to SHRD3. 
+ 
+KTIPE The value of the spanwise grid point at which any tip 
+
+leakage ends. For a hub gap set KTIPE = the first grid 
+point on the solid blade. For a tip gap set KTIPE = KM .  
+Not used for the shrouded blade model but a value must 
+still be input. 
+
+ 
+ 
+
+There are no defaults for these values. 
+*************************************************************************** 
+ 
+CARD 44description  and 44 . 
+  
+ These cards are only needed if KTIPS is greater than zero. 
+ 
+
+FRACTIP1,  FRACTIP2 
+ 
+
+FRACTIP1 Is the tip clearance as a fraction of the span at the blade 
+leading edge 
+
+ 
+FRACTIP2 Is the tip clearance as a fraction of the span at the blade 
+
+trailing edge. 
+ 
+
+The tip gap is assumed to vary linearly between FRACTIP1  and FRACTIP2 . 
+ 
+
+There are no defaults for these values. 
+*************************************************************************** 
+ 
+
+
+
+CARD 45description  and 45 . 
+ 
+This card is only needed if both KTIPS  and KTIPE  are greater than zero. 
+for the current blade row number. 
+ 
+
+FTHICK(K), K=1,KM,  i.e.   KM values.   
+ 
+
+FTHICK FTHICK is a factor multiplying the blade thickness so that 
+it can be set to zero in the tip gap. The thickness should be 
+zero at the last point on the blade and all points beyond 
+that. It is usually set = 1.0 for points well away from the 
+tip and gradually reduced to zero over the last few points 
+on the blade. 
+
+  For example, if KT is the value of KTIPS  then 
+FTHICK(KT-3) = 1.0, FTHICK(KT-2) = 0.9, 
+FTHICK(KT-1) = 0.5, FTHICK(KT) = 0.0 and FTHICK = 
+0.0  for all K > KT  would be typical. 
+
+ 
+ 
+
+There are no defaults for these values. 
+*************************************************************************** 
+ 
+CARD 46description  and 46 . 
+ 
+
+JTRAN_I1,  JTRAN_IM,  JTRAN_K1,  JTRAN_KM 
+ 
+
+JTRAN_I1 The boundary layer is treated as laminar on the I=1 blade 
+surface up to this point beyond which the transition 
+criterion based on FTRANS is applied. 
+
+ 
+JTRAN_IM The boundary layer is treated as laminar on the I=IM 
+
+blade surface up to this point beyond which the transition 
+criterion based on FTRANS is applied. 
+
+ 
+JTRAN_K1 The boundary layer is treated as laminar on the K=1 hub 
+
+surface up to this point beyond which the transition 
+criterion based on FTRANS is applied. 
+
+ 
+JTRAN_KM The boundary layer is treated as laminar on the K=KM 
+
+casing surface up to this point beyond which the transition 
+criterion based on FTRANS is applied. 
+
+ 
+The J values are measured relative to the start of the current row, not the start of the whole 
+machine. They are automatically changed later to the J values for the whole machine. Set 
+them all = 0 and FTRANS to zero for fully turbulent boundary layers. 
+
+ 
+There are no defaults for these values . 
+*************************************************************************** 
+
+
+
+CARD 47description  and 47 . 
+ 
+
+NEW_GRID 
+ 
+
+NEW_GRID  NEW_GRID is used to decide whether or not to generate a 
+new grid, with different streamwise  (J index)  points, for 
+this blade row.  Set NEW_GRID = 1  to generate a new 
+grid, in which case extra data will be input in the section 
+headed NEW GRID DATA .   Set NEW_GRID = 0  to use 
+the grid points read in as data as the grid for the 
+calculation. 
+
+ 
+NEW_GRID  is a very useful way of refining the grid when greater accuracy is required. The 
+number of streamwise (J) points can be increased or they can be clustered in places of 
+interest. 
+ 
+There is no default for this data . 
+*************************************************************************** 
+ 
+ 
+ 
+ 
+CARD 48description  and 48 . 
+ 
+ RPMROW, RPMHUB  
+ 
+
+RPMROW The rotational speed of this blade row, in RPM.  It is 
+positive if the rotation is in the positive tangential 
+direction. 
+
+ 
+RPMHUB The rotational speed of the hub of this blade row, in RPM. 
+
+Positive if the rotation is in the positive tangential 
+direction. 
+
+ 
+ 
+
+Warning the RPM may often be negative. The hub rotation need not be the same as the blade 
+rotation, e,g. a cantilevered compressor stator with a rotating hub. The casing is taken to be 
+rotating at the same speed as the blade row between the limits JROTTS  and JROTTE, input 
+in the next card, elsewhere the casing rotation is zero. 
+ 
+There are no defaults for these values.   
+*************************************************************************** 
+ 
+
+
+
+CARD 49description  and 49 . 
+ 
+
+JROTHS,  JROTHE,  JROTTS,  JROTTE 
+ 
+ JROTHS The J value at which the hub starts rotating at RPMHUB. 
+ 
+ JROTHE The J value at which the hub stops rotating at RPMHUB . 
+ 
+
+JROTTS The J value at which the casing starts rotating at 
+RPMROW . 
+
+ 
+JROTTE The J value at which the casing stops rotating at 
+
+RPMROW . 
+ 
+
+Beyond these values the rotations are taken to be zero. The J values are relative to the start of 
+this blade row not those for the whole machine. Set both values = JMROW if a stationary hub 
+or casing is required. Note that the J values are those for the grid used in the input data, they 
+are automatically reset if NEW_GRID is used. 
+ 
+There are no defaults for these values. 
+*************************************************************************** 
+ 
+ 
+ 
+CARD 50description  and 50 . 
+ 
+
+PUPROW,  PLEROW,  PTEROW,  PDNROW 
+ 
+
+PUPROW An initial guess of the static pressure at inlet to this blade 
+row. In N/m2  . 
+
+ 
+PLEROW An initial guess of the static pressure at the leading edge of 
+
+this blade row. In N/m2  . 
+ 
+PTEROW An initial guess of the static pressure at the trailing edge of 
+
+this blade row. In N/m2  . 
+ 
+PDNROW An initial guess of the static pressure at the exit to this 
+
+blade row. In N/m2  . 
+ 
+ 
+
+These are only used for the initial guess of the flow field, they should not affect the final 
+solution but the more accurate they are the faster will be the convergence. 
+ 
+ There are no defaults for these values . 
+*************************************************************************** 
+ 
+
+
+
+CARD  51description  and 51 . 
+ 
+
+NSECS_ROW, INSURF 
+ 
+
+NSECS_ROW The number of quasi-stream surfaces on which the blade 
+sections of this row will be input. This is usually the same 
+as NSECS_IN but if it is different then interpolation in the 
+NSECS_ROW input sections will be used to obtain data 
+on NSECS_IN uniformly spaced sections. 
+
+ 
+INSURF Determines whether the first and last sections of the 
+
+NSECS_ROW input sections will be on the hub and 
+casing. 
+
+ Usually set INSURF = 0, so the first section is the hub and 
+the last section the casing. 
+
+ If INSURF = 1 the coordinates of the hub stream surface 
+will be read in later under “Annulus Geometry”. 
+
+ If INSURF = 2 then the coordinates of the casing stream 
+surface will be read in later under “Annulus Geometry”. 
+
+ If INSURF > 2 then the coordinates of both the hub and 
+casing will be read in later under “Annulus Geometry”. 
+
+ 
+If a new hub surface geometry is input then the first stream surface used to define the blade 
+geometry should be at a lower radius than the new hub. If a new casing surface geometry is 
+input then the last stream surface used to define the blade geometry should be outside of the 
+new casing. Otherwise extrapolation is necessary, which may be very inaccurate. 
+ 
+The defaults are  NSECS_ROW = NSECS_IN  and  INSURF = 0  
+*************************************************************************** 
+ 
+CARD 52description  and 52 . 
+ 
+ IF_CUSP,  IF_ANGLES 
+ 
+
+IF_CUSP Determines whether a cusp will automatically be 
+generated for this blade row. If  IF_CUSP = 0 no cusp will 
+be generated. If  IF_CUSP = 1 a cusp will be generated 
+and extra data will be needed in card 53 . IF_CUSP = 2  
+the body force model will be used to force trailing edge 
+separation and extra data will be needed in Card 54 . 
+
+ 
+IF_ANGLES Determines whether the grid angles upstream and 
+
+downstream of the blade row are generated by 
+extrapolation from the blade centre line or are read in as 
+data in Cards 66-70. IF_ANGLES = 0 means use 
+extrapolation, IF_ANGLES = 1 means read in the angles 
+in Cards 66-70 . 
+
+ 
+Defaults are  IF_CUSP =0 ,  IF_ANGLES = 0 
+*************************************************************************** 
+
+
+
+ 
+CARD 53. 
+ 
+This card is only needed if IF_CUSP in card 52 was = 1 . 
+ 
+
+ICUSP,  LCUSP,  LCUSPUP 
+ 
+
+ICUSP  The cusp is centred on the blade centre line if ICUSP = 0 . 
+It is flush with the I=1 blade surface if ICUSP = 1  and 
+with the I=IM blade surface if ICUSP = -1.  Usually 
+ICUSP = 0 . 
+
+ 
+LCUSP The number of grid cells on the cusp. Typically LCUSP = 
+
+3 . 
+ 
+LCUSPUP The cusp is started LCUSPUP grid points upstream of the 
+
+trailing edge point. Usually LCUSPUP = 0 . 
+ 
+A trailing edge cusp is usually used for blades with a thick trailing edge as it gives a better 
+representation of the real flow. If one is not used then negative loading is likely to occur near 
+the trailing edge and this is not found in practice. 
+ 
+The use of a cusp at the trailing edge is described in Note 15. 
+ 
+There are no defaults for this data. 
+*************************************************************************** 
+ 
+
+
+
+CARD 54 .  
+ 
+This card only needed if IF_CUSP = 2 so a body force is being used to force 
+separation at  the trailing edge. 
+ 
+
+NUP_I1,  NUP_IM,  NWAKE,  SEP_THIK,   SEP_DRAG 
+ 
+ 
+
+  NUP_I1  The body force starts NUP_I1 points upstream of the 
+trailing edge on the I=1 blade surface. 
+
+ 
+  NUP_IM The body force starts NUP_IM points upstream of  
+
+    the trailing edge on the I=IM blade surface. 
+ 
+  N_WAKE The body force extends N_WAKE grid points  
+
+    downstream of the trailing edge. N_WAKE may be  
+    negative. 
+
+ 
+SEP_THICK The body force is applied to all grid points which are 
+
+greater than a distance (SEP_THICK x blade thickness at 
+the separation point) from the extrapolated blade surface. 
+Typical value = 0.01. The value can be made negative to 
+increase the pitchwise extent of the body force field. 
+
+ 
+  SEP_DRAG The magnitude of the body force is proportional to  
+
+    (1-SEP_DRAG). Typical value = 0.99. Reducing this 
+    value increases the body force . 
+ 
+The body force model to force separation at a trailing edge is described in Note 16. 
+ 
+This option is seldom used. A cusp is generally preferred. 
+ 
+There are no defaults for this data. 
+************************************************************************** 
+ 
+
+
+
+***************************************************************************
+************************************************************************* 
+
+NEXT START TO INPUT THE DATA ON EACH  OF  THE 
+“NSECS_ROW”  QUASI STREAM SURFACES WHICH ARE 
+
+USED TO SPECIFY THE BLADE SHAPE. 
+ 
+
+NOTE THAT IF KM = 2  THEN ONLY A SINGLE STREAM 
+SURFACE MUST BE USED FOR BLADE GEOMETRY INPUT. 
+
+ 
+RETURN TO THIS POINT AFTER DATA ON ALL BUT THE 
+
+LAST STREAM SURFACE HAS BEEN INPUT. 
+*************************************************************************** 
+************************************************************************** 
+ 
+CARD 55 . 
+ 
+
+BLANK CARD  This is just used to space out the data set. 
+*************************************************************************** 
+ 
+CARD 56 . 
+ 
+
+BLANK CARD  This is just used to space out the data set. 
+*************************************************************************** 
+ 
+CARD 57 . 
+ 
+
+IF_DESIGN,  IF_RESTAGGER,  IF_LEAN  
+ 
+ IF_DESIGN  = 0 If there are no changes to this blade section. 
+   = 1 If this section is to be redesigned using data from the 
+
+    cards entitled “Blade Redesign Data” at the end of the 
+    main data description in which case the usual data input 
+    on the stream surface, Cards  58 to  65,  are not used. 
+
+ 
+ IF_RESTAGGER = 0 If this blade section is not rotated. = 1 to rotate this 
+
+    section using the data in Card 65A . 
+ 
+ IF_LEAN = 0 If this section is not leaned. = 1 to lean this section 
+
+    using the data in Card 65B . 
+ 
+
+Defaults are:  IF_DESIGN = 0 , IF_RESTAGGER = 0,  IF_LEAN = 0. 
+ 
+
+*************************************************************************** 
+Jump to the section entitled  “Blade Design Data”   if   IF_DESIGN is not 
+zero. Cards 58  to 65 are then not needed for this stream surface. 
+*************************************************************************** 
+
+
+
+CARD 58 . 
+ 
+FAC1,  XSHIFT 
+ 
+
+ FAC1 The axial coordinates input in the next card are scaled by 
+FAC1. Usually = 1.0 but may use 0.001 if the coordinates 
+are input in millimeters, since the final coordinates must 
+be in metres. 
+
+ 
+XSHIFT The axial coordinates input in the next card are shifted a 
+
+distance XSHIFT in the axial direction. XSHIFT is 
+applied before scaling by FAC1 and so should be in the 
+same units as XSURF . 
+
+ 
+There are no defaults for this data. 
+*************************************************************************** 
+CARD 59 . 
+ 
+ XSURF(J,K),  J = 1, JMROW 
+ 
+  XSURF XSURF are the axial coordinates of the points on the 
+
+stream surface used to define the blade shape. The values 
+are scaled by FAC1 so that the final coordinates are in 
+metres. Note that this must include points upstream and 
+downstream of the blade as well as on it. 
+
+ 
+There are no defaults for this data. 
+*************************************************************************** 
+ 
+CARD 60 . 
+
+ 
+FAC2,  TSHIFT 
+ 
+
+ FAC2 The r-theta coordinates input in the next card are scaled by 
+FAC2. Usually = 1.0 but may use 0.001 if the coordinates 
+are input in millimeters, since the final coordinates must 
+be in metres. 
+
+ 
+TSHIFT The r-theta coordinates input in the next card are shifted a 
+
+distance TSHIFT in the circumferential direction. TSHIFT 
+is applied before scaling by FAC2 and so should be in the 
+same units as RT_UPP . 
+
+ 
+There are no defaults for this data.  
+*************************************************************************** 
+ 
+
+
+
+CARD 61 . 
+ 
+ RT_UPP(J,K),  J = 1,JMROW 
+ 
+  RT_UPP RT_UPP are the r-theta coordinates of the points on the 
+
+upper surface of the blade on the stream surface used to 
+define the blade shape. The upper surface is the one with 
+the largest r-theta coordinate and for which the “I” index 
+is 1. The values are scaled by FAC2 so that the final 
+coordinates are in metres. Note that this must include 
+points upstream and downstream of the blade as well as on 
+it. The points upstream and downstream of the blade 
+should be roughly aligned with the relative flow. 
+
+ 
+There are no defaults for this data. 
+*************************************************************************** 
+
+ 
+CARD 62  
+ 
+ FAC3 
+ 
+
+ FAC3 The blade tangential thickness , delta(r-theta) , input in the 
+next card is scaled by FAC3. Usually = 1.0 but may use 
+0.001  if the coordinates are input in millimeters, since the 
+final coordinates must be in metres. 
+
+ 
+There are no defaults for this data. 
+*************************************************************************** 
+
+ 
+CARD 63 . 
+ 
+ RT_THICK(J,K),  J = 1,JMROW 
+ 
+  RT_THICK RT_THICK is the blade tangential thickness, delta(r-theta) 
+
+at the points on the stream surface used to define the blade 
+shape. The values are scaled by FAC3 so that the final 
+coordinates are in metres. Note that this must include 
+points upstream and downstream of the blade, where the 
+tangential thickness will be zero, as well as on the blade. 
+
+ 
+There are no defaults for this data. 
+*************************************************************************** 
+ 
+
+
+
+CARD 64 . 
+ 
+
+  FAC4,  RSHIFT 
+ 
+
+ FAC4 The radial coordinates input in the next card are scaled by 
+FAC4. Usually = 1.0 but may use 0.001 if the coordinates 
+are input in millimeters, since the final coordinates must 
+be in metres. 
+
+ 
+RSHIFT The radial coordinates input in the next card are shifted by 
+
+RSHIFT before being used. . RSHIFT is applied before 
+scaling by FAC4 and so should be in the same units as 
+RSURF . 
+
+ 
+ There are no defaults for this data. 
+*************************************************************************** 
+ 
+CARD 65 . 
+ 
+ RSURF(J,K),  J = 1,JMROW 
+ 
+  RSURF RSURF is the radius, of the points on the stream surface 
+
+used to define the blade shape. The values are scaled by 
+FAC4 so that the final coordinates are in metres. Note that 
+this must include points upstream and downstream of the 
+blade. The points upstream and downstream of the blade 
+should be roughly aligned with the flow, i.e. with the 
+meridional streamlines. 
+
+ 
+There are no defaults for this data. 
+*************************************************************************** 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+*************************************************************************** 
+*************************************************************************** 
+If  IF_DESIGN is not = zero then insert here the cards from the section 
+entitled  “BLADE REDESIGN DATA”  which is at the end of the main 
+input data.  If    IF_DESIGN  is equal to zero continue with Card 65A . 
+*************************************************************************** 
+*************************************************************************** 
+
+
+
+If  IF_RESTAGGER  in Card  57 was not zero then insert the following card to restagger the 
+blade section 
+ 
+CARD 65Adescription  and 65A 
+ 
+ ROTATE. FRACX_ROT 
+ 
+  ROTATE The angle of clockwise rotation of the blade section, in 
+    degrees. 
+ 
+  FRACX_ROT The centre of rotation as a fraction of the axial chord. 
+    Usually = 0.5 
+ 
+Note that this option changes all the local blade angles on the stream surface by ROTATE 
+degrees whilst keeping the stream surface geometry unchanged. It can be used for both axial 
+and radial flow machines 
+ 
+Defaults are ROTATE = 0.0  and FRACX_ROT = 0.5. 
+*************************************************************************** 
+ 
+ 
+If  IF_LEAN in Card  57 was not zero then insert the following card to lean the blade. 
+ 
+CARD 65Bdescription  and 65B 
+ 
+ ANGLEAN 
+    
+  ANGLEAN The angle by which this blade section is leaned relative to 
+    the first section. In degrees. Positive if the lean is in the 
+    positive circumferential (i.e. theta) direction. 
+ 
+Default is ANGLEAN = 0.0 
+*************************************************************************** 
+ 
+ 
+ 
+ 
+ 
+ 
+*************************************************************************** 
+*************************************************************************** 
+If KM = 2 so that a quasi-three dimensional blade-to-blade calculation is 
+being performed then insert here the cards from the section at the end of 
+the main data input entitled  “QUASI-3D DATA” .  
+ 
+ If KM is greater than 2 continue with the main data set, CARD 66 . 
+*************************************************************************** 
+*************************************************************************** 
+ 
+
+
+
+ 
+ 
+   
+ 
+ 
+ 
+ 
+ 
+ 
+*************************************************************************** 
+*************************************************************************** 
+
+END OF BLADE GEOMETRY INPUT ON ONE QUASI 
+STREAM SURFACE. 
+
+RETURN TO CARD   55   FOR THE NEXT QUASI STREAM 
+SURFACE UNLESS THIS WAS THE LAST ONE. 
+
+*************************************************************************** 
+*************************************************************************** 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+*************************************************************************** 
+*************************************************************************** 
+If  INSURF is not = zero then insert here the cards which define the hub 
+and casing geometry which are described at the end of the main input data 
+under the heading    “ANNULUS GEOMETRY DATA”.  
+ 
+If  INSURF  is equal to zero continue with Card 66 . 
+*************************************************************************** 
+*************************************************************************** 
+ 
+
+
+
+CARDS 66  to 70 are only needed if   IF_ANGLES(NR)  for this blade row 
+was greater than zero. 
+ 
+CARD 66description and 66 
+ 
+ N_ANGLES 
+ 
+   N_ANGLES The number of spanwise positions at which the 
+     grid angles upstream and downstream of the 
+     blade row will be specified. Usually 3 to 5 points 
+     are sufficient. 
+CARD 67 
+ 
+ FRACN_SPAN(N), N=1,N_ANGLES 
+ 
+   FRACN_SPAN The fraction of blade span at which the grid 
+     angles will be specified. 
+ 
+CARD 68 
+ 
+ ANGL_UP(N), N=1,N_ANGLES 
+ 
+   ANGL_UP the grid angles upstream of the blade row at the 
+     above fractions of span. In degrees. Positive if 
+     flow along the grid angle would have a positive 
+     tangential velocity. 
+CARD 69 
+ 
+ ANGL_DWN1(N), N=1,N_ANGLES 
+ 
+   ANGL_DNW1 the grid angles downstream of the blade row at 
+     the blade trailing edge at the above fractions of 
+     span. In degrees. Positive if flow along the grid 
+     angle would have a positive tangential velocity. 
+CARD 70 
+ 
+ ANGL_DWN2(N), N=1,N_ANGLES 
+ 
+   ANGL_DWN2 the grid angles downstream of the blade row at 
+     the last grid point in the row, usually the mixing 
+     plane or downstream boundary, at the above 
+     fractions of span. In degrees. Positive if flow 
+     along the grid angle would have a positive  
+     tangential velocity. 
+ 
+ 
+ There are no defaults for this data 
+*************************************************************************** 
+
+
+
+CARDS TF1  to TF3  are only needed if IM = 2 so that a throughflow 
+calculation is being performed. 
+ 
+CARD TF1description  and TF1 
+ 
+
+  ANGL_TYP, NANGLES 
+ 
+    ANGL_TYP If  ANGL_TYPE = “A” The blade exit flow 
+
+     angle is specified directly in CARD TF3. 
+       If ANGL_TYP = “D” it is specified as a  
+
+     deviation angle from the blade centre line. 
+ 
+    NANGLES The exit flow angles are specified at NANGLES 
+
+     spanwise positions. 
+ 
+
+ There are no defaults for this data. 
+ *************************************************************************** 
+ 
+
+CARD TF2 
+ 
+
+  FRAC_SPAN(N), N= 1,NANGLES 
+ 
+    FRAC_SPAN The fraction of span at which the angles will be 
+
+     given. NANGLE values must be input. 
+ 
+ There are no defaults for this data. 
+ *************************************************************************** 
+ 
+
+CARD TF3 
+ 
+  EXIT_ANGL(N), N=1,NANGLES 
+ 
+    EXIT_ANGL The blade exit flow angle or deviation angle 
+
+     depending on ANGL_TYP . In degrees.  
+      Flow angles are positive if flow along that angle 
+
+     would have a positive tangential velocity.  
+     Deviation angles are measured from the blade 
+     centre line angle and are positive if the flow 
+     departs from that angle in a clockwise direction. 
+
+ 
+ There are no defaults for this data. 
+ *************************************************************************** 
+ 
+
+
+
+ *************************************************************************** 
+*************************************************************************** 
+If  NEW_GRID is not = zero then insert here the cards which define the 
+new number and new positions of the streamwise (J) grid points as 
+described at the end of the main input data under the heading “NEW GRID 
+DATA” .  If  NEW_GRID  is equal to zero continue with Card 71 . 
+*************************************************************************** 
+*************************************************************************** 
+
+ 
+ 
+ 
+
+***************************************************************************
+*************************************************************************** 
+
+END OF ALL DATA INPUT ON ONE BLADE ROW. 
+RETURN TO CARD   38   TO START ON THE NEXT BLADE 
+
+ROW UNLESS THIS WAS THE LAST ROW. 
+*************************************************************************** 
+*************************************************************************** 
+ 
+*************************************************************************** 
+AFTER INPUTTING THE BLADE GEOMTRY ON ALL STREAMWISE SURFACES 
+START TO INPUT DATA FOR THE INLET AND EXIT BOUNDARY CONDITIONS. 
+*************************************************************************** 
+ 
+CARD 71 . 
+ 
+ BLANK CARD 
+ 
+This is only used to space out the data. It must be input. 
+*************************************************************************** 
+ 
+CARD 72 . 
+ 
+ BLANK CARD 
+ 
+This is only used to space out the data. It must be input. 
+*************************************************************************** 
+ 
+CARD 73 . 
+ 
+ KIN 
+ KIN  KIN is the number of points at which the inlet boundary 
+   conditions and the exit static pressure profile will be input 
+   in the next set of cards. 
+ 
+There is no default for this data. 
+*************************************************************************** 
+ 
+
+
+
+CARD 74description  and  74 . 
+ 
+ FR_IN(K), K = 1, KIN-1 
+ 
+
+  FR_IN(K) FR_IN is a table of the relative spanwise grid spacings of 
+   the points where the boundary conditions are given. Only 
+   the relative spacing are needed the absolute values do not 
+   matter.  
+
+    If FR_IN(3)  is set to zero then the spacings are  
+   generated automatically as a geometric progression with 
+   expansion ratio FR_IN(1)  and maximum spacing ratio = 
+   FR_IN(2) . These are applied away from both endwalls .
+   Typical values are FR_IN(1) = 1.25, FR_IN(2) = 10.0, 
+   FR_IN(3) = 0.0  .  All the remaining  KIN-4 values must 
+   still be input but they are not used.  
+ 
+ 
+Note there are KIN-1 spacings for the KIN points. 
+ 
+There are no defaults for this data. 
+*************************************************************************** 
+ 
+CARD  75description  and 75. 
+ 
+ PO1(K), K = 1, KIN 
+ 
+  PO1(K)  PO1 is the inlet stagnation pressure at points on the inlet 
+    boundary spaced by FR_IN . In N/m2 . The first point 
+    must be on the hub and the last point on the casing . 
+ 
+There are no defaults for this data. 
+*************************************************************************** 
+ 
+CARD  76description and 76 . 
+ 
+This card is only needed if IPOUT = 3 
+ 
+ PD(K), K = 1,KIN 
+ 
+  PD(K)  PD is the exit static pressure at points on the outlet  
+    boundary spaced by FR_IN . In N/m2 . The first point 
+    must be on the hub and the last point on the casing . 
+ 
+This data is only needed if  IPOUT = 3, otherwise the exit pressure is fixed by other methods. 
+See note 2 for more details on the use of IPOUT. 
+ 
+There are no defaults for this data. 
+*************************************************************************** 
+ 
+
+
+
+CARD  77description  and 77 . 
+ 
+ TO1(K), K = 1,KIN 
+ 
+  TO1(K)  TO1 is the inlet absolute stagnation temperature at points 
+    on the inlet boundary spaced by FR_IN . In degrees K . 
+    The first point must be on the hub and the last point on the 
+    casing . 
+ 
+There are no defaults for this data. 
+*************************************************************************** 
+ 
+CARD  78description  and 78 . 
+ 
+ VTIN(K), K = 1,KIN 
+ 
+  VTIN(K) VTIN is the inlet absolute tangential velocity at points on 
+    the inlet  boundary spaced by FR_IN . In m/sec . The first 
+    point must be on the hub and the last point on the casing . 
+ 
+Note that the value of VTIN is only used as an initial guess if  IN_VTAN = 0  or = 2. It is the 
+fixed value of inlet absolute tangential velocity if  IN_VTAN = 1 . 
+ 
+There are no defaults for this data. 
+*************************************************************************** 
+  
+CARD  79description  and 79 . 
+ 
+ VM1(K), K = 1,KIN 
+ 
+  VM1(K) VM1 is an initial guess of the inlet meridional velocity at 
+    points on the inlet boundary spaced by FR_IN . In m/sec . 
+    The first point must be on the hub and the last point on the 
+    casing . 
+ 
+This is only an initial guess but it determines the initial mass flow rate and so should be as 
+accurate as possible. 
+ 
+There are no defaults for this data. 
+*************************************************************************** 
+ 
+
+
+
+CARD  80description  and 80 . 
+ 
+ BS(K), K = 1,KIN 
+ 
+  BS(K)  BS is the inlet yaw angle based on the meridional velocity, 
+    i.e. tan-1(Vθ/Vm) at points on the inlet boundary spaced 
+    by FR_IN . In degrees. It is positive if the tangential  
+    velocity is positive. The first point must be on the hub and 
+    the last point on the casing .   
+ 
+Note that this is the absolute angle if IN_VTAN = 0 and the relative angle if IN_VTAN = 2. It 
+is not used if IN_VTAN = 1 but must still be input. 
+ 
+There are no defaults for this data. 
+*************************************************************************** 
+ 
+CARD  81description  and 81 . 
+ 
+ BR(K), K = 1,KIN 
+ 
+  BR (K)  BR is the inlet pitch angle i.e. tan-1(Vr/Vx) at points on the 
+    inlet boundary spaced by FR_IN . In degrees. The first 
+    point must be on the hub and the last point on the casing .   
+ 
+BR is the fixed meridional pitch angle at inlet if IN_VR = 1 . It is not used for the other 
+options of IN_VR but values must still be input. 
+ 
+There are no defaults for this data. 
+*************************************************************************** 
+ 
+CARD 82description  and 82 . 
+ 
+ PDOWN_HUB,  PDOWN_TIP 
+ 
+ PDOWN_HUB The exit static pressure on the hub. In N/m2 . This is 
+  always used for the initial guess but is only used during 
+  the calculation if  IPOUT = 0 or 1 .  
+ 
+ PDOWN_TIP The exit static pressure on the casing. In N/m2 . This is 
+  always used for the initial guess but it is only used  
+  during the calculation if  IPOUT =  1  or  -1. 
+ 
+This is the main exit boundary condition. Accurate values should be input even when they are 
+only used for the initial guess. See Note 2 for details of how IPOUT is used.  
+ 
+There is no default for this data. 
+*************************************************************************** 
+ 
+
+
+
+CARD 83description  and 83 . 
+ 
+Only needed if  ILOS = 10, to use the original mixing length model. 
+  
+For each of  NROWS blade rows input,  
+ 
+ XLLIM_I1, XLLIM_IM, XLLIM_K1,XLLIM_KM, XLLIM_DWN, XLLIM_UP 
+ 
+ XLLIM_I1 The mixing length limit on the blade lower (I=1) surface 
+  as a fraction of the blade pitch. Typical value = 0.03 . 
+ 
+ XLLIM_IM The mixing length limit on the blade upper (I=IM) surface 
+   as a fraction of the blade pitch. Typical value = 0.03 . 
+ 
+ XLLIM_K1 The mixing length limit on the hub (K=1) as a fraction of 
+   the mid-span blade pitch. Typical value = 0.03 . 
+ 
+ XLLIM_KM The mixing length limit on the casing, K=KM, as a  
+  fraction of the mid-span blade pitch. Typical value = 0.03 . 
+ 
+ XLLIM_DWN The mixing length limit on streamwise (K=constant) 
+   surfaces downstream of the trailing edge of the blade row 
+  as a fraction of the blade pitch. Typical value = 0.04 . 
+ 
+ XLLIM_UP The mixing length limit on the streamwise (K=constant) 
+   surfaces upstream of the leading edge of the blade row as 
+   a fraction of the blade pitch. Typical value = 0.02 . 
+ 
+There are NROWS lines of data needed here.  Increase the mixing length limits if the flow is 
+known to be highly turbulent or in regions where separations occur. 
+ 
+The defaults are that all mixing length limits = 0.03, except XLLIM_UP = 0.02. 
+*************************************************************************** 
+ 
+
+
+
+CARD 84description  and 84 . 
+ 
+Only needed if ILOS = 100 or = 200 so that the loss routines NEWLOSS or 
+SPAL_LOSS are being used. 
+ 
+XLLIM_IN,  XLLIM_LE,  XLLIM_TE,  XLLIM_DN, FSTURB, TURBVIS_DAMP 
+ 
+For each of NROWS blade rows input 
+ 
+ XLLIM_IN The mixing length limit at the upstream boundary to the 
+  blade row. Typical value = 0.02 . 
+ 
+ XLLIM_LE The mixing length limit at the leading edge of the blade 
+   row. Typical value = 0.03 . 
+ 
+ XLLIM_TE The mixing length limit at the trailing edge of the blade 
+   row. Typical value = 0.04 . 
+ 
+ XLLIM_DN The mixing length limit at the exit boundary of the blade 
+   row. Typical value = 0.05 . 
+ 
+ FSTURB The free stream turbulent viscosity as a multiple of the 
+  laminar viscosity. Usually = 0.0 but increase in regions of 
+  high turbulence. 
+ 
+ TURBVIS_DAMP On passing through a mixing plane the turbulent 
+   viscosity downstream of the plane is this multiple of the 
+  pitchwise averaged turbulent viscosity upstream of the 
+  mixing plane. Typical value = 0.5, but this is very much a 
+   guess. 
+ 
+There are NROWS lines of data needed here.  Increase the mixing length limits and  FSTURB 
+if the flow is known to be highly turbulent or in regions where separations occur. 
+ 
+The defaults are XLLIM_IN = 0.02, XLLIM_LE = 0.03, XLLIM_TE = 0.04, XLLIM_DN = 
+0.05,  FSTURB = 1.0, TURBVIS_DAMP = 0.5 . 
+*************************************************************************** 
+ 
+
+
+
+CARD 85description  and 85 . 
+ 
+ FACMIXUP, NMIXUP 
+ 
+  FACMIXUP The mixing length limits input above are increased by this 
+   factor for the first NMIXUP time steps. This helps to 
+   overcome initial transients. Typical value = 2.0 . 
+ 
+  NMIXUP The mixing length limits are decreased from (FACMIXUP 
+   x the input values)  to the input values over the first  
+   NMIXUP time steps.  Typical value NMIXUP = 1000 . 
+ 
+This applies to all turbulence models. It is not usually necessary to increase the turbulent 
+viscosity and may slow convergence slightly so set FACMIXUP to zero if not required. 
+The increase in mixing lengths is not used if starting from a restart file. 
+ 
+The defaults are FACMIXUP = 2.0, NMIXUP = 1000.  
+*************************************************************************** 
+ 
+CARD 86description  and 86 . 
+ 
+This card only needed if  IF_ROUGH  in Card 20  is greater than zero . 
+ 
+For each of NROWS blade rows input 
+ 
+ ROUGH_H,  ROUGH_T,  ROUGH_L,  ROUGH_U 
+ 
+  ROUGH_H Is the surface roughness on the hub, in microns. 
+ 
+  ROUGH_T Is the surface roughness on the casing, in microns. 
+ 
+  ROUGH_L Is the surface roughness on the passage lower, I = 1,  
+   surface,  in microns. 
+ 
+  ROUGH_U Is the surface roughness on the passage upper. I= IM, 
+    surface, in microns. 
+ 
+There are NROWS of values needed. Note that the passage lower surface is the blade upper 
+surface, I = 1,  and vice versa. 
+ 
+The defaults are that all surfaces are hydraulically smooth, with zero roughness. 
+*************************************************************************** 
+ 
+ 
+ 
+ 
+ 
+
+  
+
+
+
+ *************************************************************************** 
+*************************************************************************** 
+If IFCOOL is not zero then input here the cards used to define the cooling 
+flows.  These are described near the end of the data input. 
+*************************************************************************** 
+*************************************************************************** 
+ 
+ 
+ 
+ 
+*************************************************************************** 
+*************************************************************************** 
+If IFBLEED is not zero then input here the cards used to define the bleed 
+flows.  These are described near the end of the data input. 
+*************************************************************************** 
+*************************************************************************** 
+ 
+ 
+ 
+ 
+*************************************************************************** 
+*************************************************************************** 
+If there is shroud leakage on any blade row, as defined by KTIPS being set 
+to less than zero,  then input here the cards used to define the shroud 
+leakage flows.  These are described near the end of the data input. 
+*************************************************************************** 
+*************************************************************************** 
+ 
+  
+ 
+ 
+ 
+ 
+*************************************************************************** 
+*************************************************************************** 
+
+END OF ALL DATA INPUT 
+*************************************************************************** 
+*************************************************************************** 
+ 
+  
+ 
+ 
+ 
+ 
+
+
+
+ BLADE REDESIGN DATA 
+*************************************************************************** 
+**************************************************************** 
+The following cards number IFDES1 to IFDES4  are input if using the 
+blade section redesign option.  These are needed for every blade section for 
+which IF_DESIGN was non-zero. 
+*************************************************************************** 
+*************************************************************************** 
+ 
+CARD IFDES1description and IFDES1 
+ 
+ N_SS,  N_LE,  N_TE 
+ 
+  N_SS  The number of points used to define the new stream  
+    surface.  Typically about 8 points are sufficient. 
+ 
+  N_LE  The number of the leading edge point in the N_SS input 
+    points. 
+ 
+  N_TE  The number of the trailing edge point in the N_SS input 
+    points. 
+ 
+Note that there must be an input point at the leading edge and one at the trailing edge. 
+*************************************************************************** 
+ 
+CARD IFDES2description and IFDES2 
+ 
+ For N = 1, N_SS ,     i.e. N_SS lines of data in total  . Input 
+ XSS(N), RSS(N), RELSPACE(N) 
+ 
+  XSS  The axial coordinate of the point on the stream surface. In 
+    metres. 
+ 
+  RSS  The radius of the point on the stream surface. In metres. 
+ 
+  RELSPACE The relative grid spacing of the final grid points at the 
+    point on the stream surface. Only the relative values are 
+    needed the absolute values are not used. 
+ 
+Note. Interpolation between the points is used so that the input points must define a smooth 
+surface and the spacing of the points should note change suddenly. 
+ 
+The stream surface shape is set by this redesign procedure, not by the usual stream surface 
+data input. 
+ 
+**************************************************************************
+  
+
+
+
+CARD IFDES3description and IFDES3 . 
+ 
+
+NNEW, NSMOOTH 
+ 
+
+NNEW   The number of points at which new blade geometry will 
+be input in the next card. Typically 5 to 10 points are 
+sufficient. 
+
+ 
+NSMOOTH The number of times that the new blade data will be 
+
+smoothed.  Typical value = 2 . 
+ 
+
+There are no defaults for this data . 
+************************************************************************** 
+
+ 
+CARD  IFDES4description and IFDES4 . 
+ 
+ For N = 1 to NNEW input the following data, i.e. NNEW cards in total. 
+ FRACNEW(N) ,BETANEW(N), THICKUP(N), THICKLOW(N) 
+ 
+
+FRACNEW The fraction of meridional chord at which the blade details 
+are given. The first value must be 0.0  and the last value = 
+1.0   
+
+ 
+ BETANEW The blade camber line angle at FRACNEW. In degrees. It 
+
+is positive if a vector in the direction of the angle would 
+have a positive tangential component. 
+
+ 
+THICKUP The blade tangential thickness above the camber line as a 
+
+fraction of the axial chord. 
+ 
+THICKLOW The blade tangential thickness below the camber line as a 
+
+fraction of the axial chord. 
+ 
+
+If THICKUP is not equal to THICKLOW then the camber line is not a true centre line of the 
+blade.  
+ 
+There are no defaults for this data. 
+************************************************************************** 
+
+
+
+CARD IFDES5description and IFDES5 
+ 
+ FRAC_CHORD_UP,  FRAC_CHORD_DWN,  RTHETA_MID 
+ 
+  FRAC_CHORD_UP The grid extension upstream of the leading edge 
+    as a fraction of the meridional chord. 
+ 
+  FRAC_CHORD_DWN The grid extension downstream of the trailing 
+    edge as a fraction of the meridional chord. 
+ 
+  RTHETA_MID The tangential coordinate of the mid grid point, i.e. the 
+    point with the mid  J  value.. This may be used to change 
+    the blade stacking but is usually set it = 0.0 
+ 
+There are no defaults for this data 
+************************************************************************** 
+ 
+
+ 
+ 
+ 
+
+************************************************************************** 
+************************************************************************** 
+End of data input for the redesign option. Return to 
+
+the main input data, Card 66. 
+************************************************************************** 
+************************************************************************** 
+ 
+ 
+
+
+
+DATA FOR A QUASI-3D BLADE-TO-BLADE 
+CALCULATION 
+
+ 
+This data is only input when KM=2. 
+ 
+CARD Q3D1description and Q3D1 
+ 
+
+  Q3DFORCE 
+ 
+    Q3DFORCE A factor scaling the force which is applied to 
+
+     keep the flow on the specified stream surface. 
+     Typical value = 1.0 but larger values are often 
+     stable and will give faster convergence. 
+
+ 
+CARD Q3D2 
+ 
+
+  NSS 
+ 
+    NSS  The number of points used to define the stream 
+
+     surface, usually about 5 points should be  
+     sufficient 
+
+ 
+CARD Q3D3 
+
+ 
+  FRACSS(N), N=1,NSS  NSS values of the fraction of distance along the 
+
+     stream surface at which its thickness will be 
+     given. The distance is measured from the first 
+     point on the input stream surface and its length is 
+     the meridional distance from the first to last 
+     points on the input stream surface. Hence   
+     FRACSS(1) = 0.0  and FRACSS(NSS) = 1.0 . 
+
+ 
+CARD Q3D4 
+
+ 
+  TKSS(N), N=1,NSS  The relative stream surface thickness at points 
+
+     FRACSS. The relative thickness is the local 
+     value divided by the value at the first point. 
+
+ 
+  
+ There are no defaults for this data. 
+ 
+ Note that only a single stream surface must be used to define the geometry if KM = 2 . 
+  
+ See Note 19  for more details of the Q3D model. 
+ 
+
+End of Q3D data return to main data input, Card 66 
+
+
+
+******************************************************** 
+ANNULUS GEOMETRY DATA 
+
+************************************************************************** 
+**************************************************************** 
+Cards to define a new annulus geometry which are needed for any blade 
+row for which  INSURF is greater than zero. 
+************************************************************************** 
+************************************************************************** 
+ 
+CARD  INSRF1 . 
+
+ 
+  This card only needed if INSURF = 1  or INSURF > 2 . 
+
+ 
+NHUB 
+ 
+
+NHUB  NHUB is the number of points which will be used to 
+define the hub stream surface if INSURF = 1  or INSURF 
+> 2 . Typically use about 5 points per blade row. 
+
+There are no defaults for this data. 
+************************************************************************** 
+
+ 
+CARD INSRF2 . 
+
+ 
+  This card only needed if INSURF = 1  or INSURF > 2 . 
+
+ 
+XHUB(N), N=1 to NHUB.   i.e. NHUB values in total .  
+
+ 
+XHUB   Axial coordinates of points on the hub stream surface.  
+
+They are scaled by FAC1 so that the final coordinates are 
+in metres. 
+
+ 
+There should be several points per blade row so that the hub stream surface is well defined. 
+There are no defaults for this data. 
+************************************************************************** 
+ 
+CARD INSRF3 RHUB(N) ,  N=1,NHUB 
+
+ 
+  This card only needed if INSURF = 1  or INSURF > 2 . 
+
+ 
+RHUB(N), N=1 to NHUB.   i.e. NHUB values in total .  
+
+ 
+RHUB Radial coordinates of points on the hub stream surface. 
+
+They are scaled by FAC4 so that the final coordinates are 
+in metres. 
+
+There should be several points per blade row so that the hub stream surface is well defined. 
+There are no defaults for this data. 
+************************************************************************** 
+
+
+
+CARD INSURF4 . 
+ 
+
+  This card only needed if INSURF = 2  or INSURF > 2 . 
+ 
+NTIP 
+ 
+
+NTIP  NTIP is the number of points which will be used to define 
+the casing stream surface if INSURF = 2  or INSURF > 2 . 
+
+  Typically use about 5 points per blade row. 
+ 
+There are no defaults for this data. 
+************************************************************************** 
+ 
+CARD INSRF5 . 
+
+ 
+  This card only needed if INSURF = 2  or INSURF > 2 . 
+
+ 
+XTIP(N),  N = 1 to NTIP.  i.e.  NTIP values in total.  
+
+ 
+XTIP   Axial coordinates of points on the casing stream surface. 
+ They are scaled by FAC1 so that the final coordinates are 
+
+in metres. 
+ 
+
+There should be several points per blade row so that the casing stream surface is well defined. 
+ 
+
+There are no defaults for this data. 
+************************************************************************** 
+ 
+CARD INSRF6 .  
+
+ 
+  This card only needed if INSURF = 2  or INSURF > 2 . 
+
+ 
+RTIP(N),  N=1 to NTIP .  i.e. NTIP values in total. 
+
+ 
+RTIIP Radial coordinates of points on the casing stream surface. 
+ They are scaled by FAC4 so that the final coordinates are 
+
+in metres. 
+ 
+
+There should be several points per blade row so that the casing stream surface is well defined. 
+ 
+
+There are no defaults for this data. 
+ 
+************************************************************************** 
+************************************************************************** 
+End of data input to define new hub and casing 
+geometry.  Return to the main data input CARD 66. 
+************************************************************************** 
+
+
+
+NEWGRID  DATA 
+**************************************************************** 
+**************************************************************** 
+The following Cards  NG_1  to NG_12  are only needed if subroutine 
+NEWGRID  is used to generate a new grid with a different number of 
+streamwise (J index) grid points This is done for any blade row for which 
+NEW_GRID is greater than zero. 
+****************************************************************
+**************************************************************** 
+ 
+ 
+ 
+CARD NG_1 . 
+
+ 
+ BLANK CARD This is just used to space out the data. 
+
+*************************************************************************** 
+ 
+
+ 
+ 
+ 
+CARD NG_2 . 
+ 
+ NUP, NON, NDOWN 
+ 
+
+ NUP    NUP is the number of grid points upstream of the leading 
+edge to be generated by subroutine NEWGRID.  
+
+ 
+ NON   NON is the number of grid points on the blade surface to 
+
+be generated by subroutine NEWGRID . 
+ 
+ NDOWN  NDOWN is the number of grid points downstream of the 
+
+trailing edge to be generated by subroutine NEWGRID . 
+ 
+
+Subroutine NEWGRID will generate a new grid with this number of points. If any of  NUP, 
+NON  or NDOWN are zero  the grid point spacing are generated from a table of a few relative 
+grid point spacings as in Card NG_4.  If NUP, NON or NDOWN are greater than zero then 
+the relevant grid spacings, i.e.  upstream, on or downstream of the blade, are read in from a 
+table of spacing as in Card NG_5.  The second option is the most usual . 
+ 
+There are no defaults for this data. 
+*************************************************************************** 
+
+
+
+CARD NG_3 . 
+ 
+ This is only needed if NUP from the last card, NG_2, was zero. 
+ 
+ NUP 
+ 
+
+NUP  NUP is the number of grid points upstream of the leading 
+edge to be input in the next card. This new value of NUP 
+overwrites the value of zero set in CARD NG_2. 
+
+ 
+*************************************************************************** 
+CARD NG_4 . 
+ 
+ This is only needed if NUP in card NG_2 was zero . 
+ 
+ XFRACUP(N) , RELSPUP(N) , N=1,NUP 
+ 
+
+  XFRACUP(N)  A table of fractional distances upstream of the blade 
+leading edge at which the grid spacing will be given. The 
+first value must be 0.0  and the last value must be 1.0 . 
+
+ 
+  RELSPUP(N) The relative grid spacing at XFRACUP(N) . 
+ 
+Note only the relative spacings are needed, the absolute value do not matter. The advantage of 
+the type of input compared to that in Card NG_5 is that far fewer points need to be given, 
+typically 4 or 5 points will suffice. 
+ 
+There is no default for this data. 
+*************************************************************************** 
+ 
+CARD NG_5 . 
+ 
+ This is only needed if NUP in card NG_2 was greater than zero . 
+ 
+ UPF(J) J = 1,NUP 
+ 
+
+  UPF(J)  NUP values of the relative grid spacing upstream of the 
+leading edge of the blade row.  Only the relative spacing 
+are needed, the absolute values do not matter. 
+
+ 
+There is no default for this data. 
+*************************************************************************** 
+ 
+
+
+
+CARD NG_6 . 
+ 
+ This is only needed if  NON  in card  NG_2 was zero. 
+ 
+ NON 
+ 
+
+NON  NON is the number of grid points on the blade surface to 
+input in the next card. This new value of NON overwrites 
+the value of zero set in Card NG_2 . 
+
+ 
+There is no default for this data.  
+ 
+*************************************************************************** 
+ 
+CARD NG_7 . 
+ 
+ This is only needed if NON in card NG_2 was zero . 
+ 
+ XFRACON(N) , RELSPON(N) , N = 1,NON 
+ 
+
+  XFRACON(N)  A table of fractional distances ON the blade surface at 
+which the grid spacing will be given. The first value must 
+be 0.0  and the last value must be 1.0 . 
+
+ 
+  RELSPON(N) The relative grid spacing at XFRACON(N) . 
+ 
+Note only the relative spacings are needed the absolute value do not matter. The advantage of 
+the type of input compared to that in Card NG_8 is that far fewer points need to be given, 
+typically 4 or 5 points will suffice. 
+ 
+There is no default for this data. 
+*************************************************************************** 
+ 
+CARD NG_8 . 
+ 
+ This is only needed if NON in card NG_2 was greater than zero . 
+ 
+ ONF(J) J = 1,NON 
+ 
+
+  ONF(J)  NON values of the relative grid spacing on the blade 
+surface.  Only the relative spacing are needed the absolute 
+values do not matter. 
+
+ 
+There is no default for this data. 
+*************************************************************************** 
+
+
+
+CARD NG_9 . 
+ 
+ This is only needed if NDOWN from card  NG_2 was zero. 
+ 
+ NDOWN 
+ 
+
+NDOWN  NDOWN is the number of grid points downstream of the 
+trailing edge to be input in the next card. This new value 
+of NDOWN overwrites the value of zero set in Card 
+NG_2 . 
+
+ 
+There is no default for this data.  
+ 
+CARD NG_10 . 
+ 
+ This is only needed if  NDOWN in card NG2 was zero . 
+ 
+ XFRACDWN(N) , RELSPDWN(N), N=1,NDOWN 
+ 
+
+  XFRACDWNP(N) A table of fractional distances downstream of the 
+blade trailing edge at which the grid spacing will be given. 
+The first value must be 0.0  and the last value must be 1.0 . 
+
+ 
+  RELSPDWN(N) The relative grid spacing at XFRACDWN(N) . 
+ 
+Note only the relative spacings are needed the absolute value do not matter. The advantage of 
+the type of input compared to that in Card NG_11 is that far fewer points need to be given, 
+typically 4 or 5 points will suffice. 
+ 
+There is no default for this data. 
+*************************************************************************** 
+ 
+CARD NG_11 . 
+ 
+ This is only needed if  NDOWN in card NG2  was greater than zero . 
+ 
+ DOWNF(J) J = 1,NDOWN 
+ 
+
+  DOWNF(J)  NDOWN values of the relative grid spacing 
+downstream of the blade trailing edge.  Only the relative 
+spacing are needed the absolute values do not matter. 
+
+ 
+There is no default for this data. 
+*************************************************************************** 
+
+ 
+
+
+
+CARD NG_12 . 
+ 
+
+ UPEXT, DWNEXT 
+ 
+ UPEXT The upstream extent of the original grid upstream of the 
+
+leading edge is multiplied by UPEXT. The leading edge 
+position is unchanged. 
+
+ 
+DWNEXT The downstream extent of the original grid downstream of 
+
+the trailing edge is multiplied by DWNEXT. The trailing 
+edge point is unchanged. 
+
+ 
+ 
+
+Note that if there is another blade row upstream/downstream of the current one and the option 
+to generate the grid between rows automatically using  ISHIFT = 2, 3  or 4 ,  is used, then 
+these numbers will not have any effect. Set UPEXT and DWNEXT both =  1.0  to keep the 
+original grid extensions. 
+ 
+There are no defaults for this data. 
+*************************************************************************** 
+ 
+ 
+ 
+ 
+*************************************************************************** 
+*************************************************************************** 
+ 
+End of NEWGRID data for the current blade row. 
+Return to the main data input, CARD 71.  
+
+ 
+*************************************************************************** 
+*************************************************************************** 
+
+
+
+COOLING FLOW DATA 
+*************************************************************************** 
+*************************************************************************** 
+If IFCOOL is not zero insert here the cards which define the 
+cooling flows for each blade row. 
+*************************************************************************** 
+*************************************************************************** 
+ 
+ 
+*************************************************************************** 
+*************************************************************************** 
+
+For N = 1 to NROWS  insert the following cards. 
+*************************************************************************** 
+*************************************************************************** 
+ 
+CARD    CWL1description   and CWL1 . 
+ 
+
+  NCWLBLADE,  NCWLWALL 
+ 
+   NCWLBLADE The number of cooling flow patches on the blade surfaces. 
+ 
+   NCWLWALL The number of cooling flow patches on the hub and  
+
+    casing. 
+ 
+
+Set these to zero if there is no cooling on this blade row. 
+************************************************************************** 
+ 
+FOR N =1, NCWLBLADE  input CARDS   CWL2 and CWL3 
+ 
+ 
+CARD     CWL2description  and CWL2 . 
+ 
+ IC,  JCBS,  JCBE,  KCBS, KCBE 
+ 
+  IC  The “I” value of the blade surface through which coolant 
+    is being ejected. Must = 1  or  IM . 
+ 
+  JCBS  The “J” value at the start of the cooling patch. 
+ 
+  JCBE  The “J” value at the end of the cooling patch. 
+ 
+  KCBS  The “K” value at the start of the cooling patch. 
+ 
+  KCBE The “K” value at the end of the cooling patch. 
+************************************************************************** 
+ 
+
+
+
+CARD CWL3 . 
+ 
+ CFLOWB, TOCOOLB, POCOOLB, MACHCOOL, SANGLEB, XANGLEB,  
+ RVTIN_B, RPM_COOL 
+ 
+
+  CFLOWB  = the mass flow rate of coolant through the current patch 
+      for the whole blade row. In Kg/sec. 
+
+ 
+  TOCOOLB = the absolute stagnation temperature at which the  
+
+     coolant is supplied to the blade row. In K. 
+ 
+  POCOOLB = the absolute stagnation pressure at which the  
+
+     coolant is supplied to the blade row. In N/m2. 
+ 
+  MACHCOOL = the relative Mach number at which the coolant  
+
+     leaves the blade surface. 
+ 
+  SANGLEB  = the angle between the coolant jet and the plane  
+
+     which is locally tangent to the blade surface. In  
+     degrees. See Note 14. 
+
+ 
+  XANGLEB = the angle between the projection of the cooling jet  
+
+     onto the blade surface and a line which is the intersection 
+     of the blade surface with a surface  of constant radius, i.e. 
+     with a cylindrical surface.  In degrees.  See Note  14 . 
+
+ 
+  RVT_IN  Is the angular momentum (radius x tangential  
+
+     velocity) with which the coolant flow is supplied to the 
+     blade row by any pre-swirl system. Set = zero if no pre-
+     swirl system. 
+
+ 
+  RPM_COOL Is the rotational speed , in RPM, of the disc  through which 
+
+      the coolant flow is supplied to the blade row. RVT_IN  
+      and RPM_COOL  are used to find the pumping work on 
+      the coolant between its supply condition to the disc and 
+      the point where it enters the mainstream.  Set = zero  
+      except for coolant which is supplied to a rotating blade 
+      row or disc. 
+
+ 
+ 
+
+Note. All this data must be input for each of NCWLBLADE cooling patches on the current 
+blade row. Omit this data if  NCWLBLADE = zero. 
+ 
+Return to Card  CWL2 to insert data for the next blade surface coolant 
+patch on this row. 
+ 
+*************************************************************************** 
+ 
+ 
+
+
+
+FOR N =1, NCWLWALL  input  CARDS   CWL4  and CWL5 
+ 
+CARD     CWL4description  and CWL4 . 
+ 
+ KC,  JCWS,  JCWE,  ICWS, ICWE 
+ 
+  KC  The “K” value of the endwall surface through which  
+    coolant is being ejected. Must = 1  or  KM . 
+ 
+  JCWS  The “J” value at the start of the cooling patch. 
+ 
+  JCWE  The “J” value at the end of the cooling patch. 
+ 
+  ICWS  The “I” value at the start of the cooling patch. 
+ 
+  ICWE The “I” value at the end of the cooling patch. 
+ 
+*************************************************************************** 
+ 
+
+
+
+CARD  CWL5 . 
+ 
+ CFLOWW, TOCOOLW, POCOOLW, MACHCOOL, SANGLEW, TANGLEW,  
+ RVTIN_W, RPM_COOL 
+ 
+
+  CFLOWW  = the mass flow rate of coolant through the current patch 
+     for the whole blade row. In Kg/sec. 
+
+ 
+  TOCOOLBW = the absolute stagnation temperature at which the  
+
+     coolant is supplied to the blade row. In K. 
+ 
+  POCOOLW = the absolute stagnation pressure at which the  
+
+     coolant is supplied to the blade row. In N/m**2. 
+ 
+  MACHCOOL = the relative Mach number at which the coolant  
+
+     leaves the blade surface. 
+ 
+  SANGLEW = the angle between the coolant jet and the plane  
+
+     which is locally tangent to the endwall surface. In degrees. 
+     See Note 14. 
+
+ 
+  XANGLEW = the angle between the projection of the cooling jet onto 
+
+      the endwall surface and a line which is the intersection of 
+      the blade surface with a surface of constant   
+      circumferential coordinate, i.e. with the axial-radial plane  
+      θ = constant. In degrees.  See Note  14. 
+
+ 
+  RVTIN_W  Is the angular momentum (radius x tangential  
+
+     velocity) with which the coolant flow is supplied to the 
+     blade row by any pre-swirl system. Set = zero if no pre-
+     swirl system. 
+
+ 
+  RPM_COOL Is the rotational speed , in RPM, of the disc  through which 
+
+      the coolant flow is supplied to the blade row. RVT_IN  
+      and RPM_COOL  are used to find the pumping work on 
+      the coolant between its supply condition to the disc and 
+      the point where it enters the mainstream.  Set = zero  
+      except for coolant which is supplied to a rotating blade 
+      row or disc. 
+
+ 
+Note. All this data must be input for each of NCWLWALL cooling patches. Omit this data if 
+NCWLWALL = zero. 
+ 
+***************************************************************************
+*************************************************************************** 
+Return to Card  CWL4 to insert data for the next endwall surface 
+coolant patch on this row. 
+*************************************************************************** 
+*************************************************************************** 
+
+
+
+*************************************************************************** 
+*************************************************************************** 
+ 
+Return to Card CWL1 to insert cooling flow data for the next 
+blade row. 
+ 
+*************************************************************************** 
+*************************************************************************** 
+ 
+ 
+ 
+ 
+ 
+ 
+*************************************************************************** 
+*************************************************************************** 
+End of all data input for cooling flows.  Return 
+
+to the main data input. 
+*************************************************************************** 
+*************************************************************************** 
+
+
+
+BLEED FLOW DATA 
+*************************************************************************** 
+*************************************************************************** 
+If  IFBLEED  is not zero insert here the cards which define the bleed flows 
+for each blade row. 
+*************************************************************************** 
+*************************************************************************** 
+
+ 
+FOR N = 1, NROWS insert the following cards. 
+ 
+CARD  BL1description  and BLD1 . 
+
+ 
+NBLEED 
+ 
+ NBLEED The number of bleed patches in this blade row, including 
+
+    both blade surfaces and endwalls. 
+********************************************************************* 
+
+ 
+For N = 1 to NBLEED insert cards BLD2 
+
+ 
+CARD BLD2 
+
+ 
+ IBLDS, IBLDE, JBLDS, JBLDE, KBLDS, KBLDE, MASSBLED 
+ 
+
+  IBLDS  = the I value where the bleed starts. 
+  IBLDE  = the I value where the bleed ends. 
+  JBLDS  = the J value where the bleed starts, defined  
+
+     relative to the start of the current blade row. 
+  JBLDE  = the J value where the bleed ends, defined   
+
+     relative to the start of the current blade row. 
+  KBLDS   = the K value where the bleed starts. 
+  KBLDE  = the K value where the bleed ends. 
+  MASSBLED = the mass flow bled off in Kg/s. 
+ 
+ Note that there can be bleed flows through either the endwall surfaces or the blade surfaces, 
+
+or both. 
+*************************************************************************** 
+Return to card BLD2  for the next bleed patch on the current blade row. 
+*************************************************************************** 
+ 
+*************************************************************************** 
+Return to cards  BLD1 to input  bleed data on the next blade row. 
+*************************************************************************** 
+ 
+
+End of all bleed flow data return to the main 
+data input. 
+
+
+
+ 
+*************************************************************************** 
+
+SHROUD LEAKAGE DATA 
+*************************************************************************** 
+*************************************************************************** 
+Insert here the cards which define the shroud leakage for each blade row 
+for which KTIPS   is less than zero. 
+*************************************************************************** 
+*************************************************************************** 
+
+ 
+FOR N = 1 to NROWS insert cards  SHRD1 to SHRD3 . 
+ 
+Cards SHRD1  to SHRD3 are only needed if KTIPS is less than zero for this 
+row. 
+ 
+CARD SHRD1 . 
+ 
+ KSHROUD, JLEAKS, JLEAKE, JLKINS, JLKINE 
+ 
+  KSHROUD  The K value where leakage takes place, set = 1 for hub 
+    leakage, = KM for tip leakage. 
+ 
+  JLEAKS The J value where the leakage starts, this is relative to the 
+   J value at the start of the current blade row. 
+ 
+  JLEAKE The J value where the leakage ends, this is relative to the 
+   J value at the start of the current blade row. 
+ 
+  JLKINS The J value where the leakage flow starts to re-enter the 
+   main flow. this is relative to the J value at the start of the 
+   current blade row. 
+ 
+  JLKINE The J value where the leakage flow finishes re-entering 
+   the main flow. this is relative to the J value at the start of 
+   the current blade row. 
+ 
+Note the leakage is extracted uniformly over the area of extraction between JLEAKS and 
+JLEAKE  and re-injected uniformly over the area of injection between JLKINS  and JLKINE. 
+ 
+Note that shroud leakage flow from downstream of the blade to upstream, as in compressors, 
+can be handled. In this case JLEAKS and JLEAKE should be greater than JTE, and 
+JLEAKINS and JLEAKINE should be less than JLE. 
+ 
+*************************************************************************** 
+ 
+
+
+
+CARD SHRD2 . 
+ 
+ SEALGAP, NSEAL, CFSHROUD, CFCASING 
+ 
+  SEALGAP The seal clearance in metres. 
+ 
+  NSEAL The number of shroud seals (fins).  
+ 
+  CFSHROUD The skin friction coefficient on the shroud outer surface, 
+   this is rotating at the same speed as the blade row. Typical 
+    value = 0.005. 
+ 
+  CFCASING The skin friction coefficient on the endwall surface  
+   adjacent to the shroud. This could be the hub or casing, 
+    typical value = 0.005. 
+ 
+*************************************************************************** 
+ 
+CARD SHRD3 . 
+ 
+ WCASE, PITCHIN 
+ 
+  WCASE  The rotational speed of the hub or casing adjacent to the 
+   shroud in RPM. This will always be zero for the casing 
+   but could be the machine rotational speed for the hub. 
+ 
+
+   PITCHIN The angle in the meridional plane at which the  
+    leakage flow re-enters the mainstream. The  angle is  
+    measured from a tangent to the hub or casing and is  
+    always treated as positive. In degrees. Guess it = 45deg if 
+    the angle is not known.  
+
+ 
+ 
+
+*************************************************************************** 
+Return to Card  SHRD1  for shroud leakage on the next blade row for 
+which KTIPS is negative. 
+*************************************************************************** 
+ 
+ 
+ 
+ 
+*************************************************************************** 
+*************************************************************************** 
+End of shroud leakage data. Return to the main data 
+
+input. 
+*************************************************************************** 
+*************************************************************************** 
+
+
+
+NOTES ON THE INPUT DATA  
+ 
+Note 1  INLET BOUNDARY CONDITIONS 
+ 
+
+IN_PRESS   is used to specify the boundary condition on the static pressure at inlet.  
+ 
+ If  IN_PRESS = 0 , the inlet pressure is calculated from the inlet density, 
+ which is calculated directly by the solver, and an assumption of locally 
+ isentropic flow from the inlet stagnation conditions. In this case higher values of 
+ RFIN, typically = 0.5, can usually be used. 
+
+ 
+ If  IN_PRESS  =  1,  the inlet pressure is linearly extrapolated along the grid lines 
+ from the interior flow field assuming   d2P/dm2  = 0.  
+ 
+ If  IN_PRESS  =  3 the upstream boundary condition is as with IN_PRESS  = 1 but 
+ the pressures are circumferentially averaged before extrapolation. This may be used 
+ to cure an instability which sometimes occurs at the inlet boundary.  This instability 
+ takes the form of a saw tooth wave along the inlet boundary and usually seems to 
+ occur when the grid is highly distorted (i.e.  skewed) at inlet. 
+ 
+ If  IN_PRESS = 4  then the boundary condition is as with IN_PRESS =  1 but  the 
+ inlet static pressure is taken to be uniform over the whole inlet boundary and is taken 
+ from the pressure extrapolated at the mid-span and mid-pitch  point. This option may 
+ be useful for calculating flows with a strong velocity gradient in the inlet as it 
+ prevents failure if the inlet velocity reverses locally. 
+   
+Boundary conditions which use d2P/dm2 =0, i.e.  IN_PRESS = 1 , 3 or 4  require a lower 
+value of the inlet pressure relaxation factor, RFIN. Typically RFIN = 0.1 in such cases. 
+
+ 
+IN_PRESS = 0 is generally preferred for axial flow machines. 
+ 
+The inlet pressure and the specified inlet stagnation pressure and temperature are used, 
+together with the assumption of isentropic flow, to compute the absolute velocity at inlet.  
+This is then resolved into the velocity components according to IN_VTAN  and IN_VR. 
+
+ 
+  IN_VTAN   is used to specify the type of boundary condition on the inlet flow direction on 
+the blade-blade stream surface  (i.e. on tan-1 (Vθ/Vm)). 
+ 
+ If  IN_VTAN  =  0,  the absolute flow angle is held fixed at the value  given by 
+ BS(K) . In degrees,  card 77. 
+ 
+ If  IN_VTAN  =  2,  then the relative flow angle is held  
+ fixed and  =  BS(K). In degrees, card 77 . 
+ 
+
+
+
+ If  IN_VTAN  =  1, then the absolute swirl velocity is held fixed and equal to 
+ VTIN(K)  , card 75, in m/sec.  and the value of BS(K) is ignored.   
+ 
+  
+IN_VTAN = 0 is usually the best condition for both fixed and rotating blade rows.  
+ 
+IN_VTAN = 1 should be used if the relative inlet flow is supersonic since the unique 
+incidence condition then applies and a fixed flow direction may then be unstable. 
+ 
+ 
+ 
+IN_VR   is used to specify the inlet boundary condition on the radial velocity at inlet.   
+ 
+ If INVR  = 0   then the radial velocity at inlet will be obtained by extrapolation 
+ from the interior flow field  Vr(1) = Vr(2) ,  and the value of BR(K) will be ignored 
+ although it must still be input. 
+ 
+ If  IN_VR = 1 then the radial velocity at inlet is obtained from the meridional 
+ velocity and the input value of meridional pitch angle, BR(K), card 78. 
+ 
+ 
+If the radial velocity is expected to change with meridional distance, as in radial flow 
+machines. Then IN_VR = 1  must be used as  Vr(1) = Vr(2)  is not physically realistic and so 
+is likely to be unstable. 
+ 
+It is important that the specified pitch angle on the endwalls is compatible with the endwall 
+slope, as determined by the annulus geometry. If this is not the case local instability may 
+occur. 
+ 
+ 
+
+
+
+NOTE 2 EXIT BOUNDARY CONDITIONS 
+ 
+The usual exit boundary condition is a specified static pressure. This spanwise variation in 
+static pressure is determined by IPOUT. 
+ 
+If IPOUT = 1  then the exit pressure is input a both hub and tip and a linear variation with 
+span is assumed. 
+ 
+If IPOUT = 0  then the pressure is fixed at the hub and the spanwise variation is obtained 
+from radial equilibrium, assuming no streamline curvature. 
+ 
+If IPOUT = -1 the pressure is fixed on the casing and the spanwise variation is obtained from 
+radial equilibrium assuming no streamline curvature. 
+ 
+If IPOUT = 3 the spanwise variation of exit pressure is input as data in card 73. 
+ 
+These options fix the spanwise variation in pitchwise area averaged pressure at exit. The 
+pitchwise variation in the exit pressure is obtained by extrapolating from the next upstream 
+grid point. The proportion of the upstream pressure variation that is imposed on the exit 
+boundary is FEXTRAP which is input in card 19. This extrapolation allows pressure waves to 
+interact with the exit boundary with little reflection. A typical value of FEXTRAP is 0.8 or 
+0.9 . 
+ 
+In some cases the flow tries to reverse at the exit boundary, i.e. to try to enter through it. This 
+is always unstable as there are no boundary conditions to give the properties of the entering 
+fluid. There are several possible ways of overcoming this. The simplest method is to apply 
+high smoothing near the boundary so as to make the flow more uniform. This is done by 
+SFEXIT and NSFEXIT in card 23. Typical values are SFEXIT = 0.1, NSFEXIT = 5 but either 
+may be increased to give a more powerful smoothing. 
+ 
+An alternative method is to model a perforated plate or wire mesh at exit. The resistance of 
+the mesh will cause the flow through it to be more uniform and should remove any tendency 
+to reverse flow. This option is chosen by setting PLATE_LOSS in card 24 as the pressure loss 
+coefficient of the plate, which the pressure drop through it divided by the upstream dynamic 
+head. A value 0f 2,0 should make a non-uniform flow closely uniform.  
+ 
+A further option is to model a throttle at exit. This is mainly used to obtain solutions for 
+compressors near their stall point. At the stall point the mass flow varies very rapidly with 
+exit pressure, inevitably leading to instability at conditions very close to the stall point. To 
+overcome this the exit pressure may be made to vary with the exit mass flow along a 
+parabolic curve passing through a prescribed point with mass flow = THROTTLE_MAS  and 
+static pressure = THROTTLE_PRES. This simulates the presence of a throttle downstream of 
+the calculation domain. A simple choked throttle would have a mass flow directly 
+proportional to the exit stagnation pressure but it was found that a steeper curve gave better 
+results and so the parabolic variation of pressure with mass flow was chosen. The final 
+solution should lie at the intersection of the machine characteristic and the throttle line so the 
+steeper the line the closer should be the mass flow to the required mass flow. If this option is 
+chosen then THROTTLE_EXIT must be set = 1 in card 24 and then THROTTLE_PRESS, 
+THROTTLE_MAS and RF_THROTL  must be input in card 25 . 
+
+
+
+NOTE 3   TIME STEP OPTIONS 
+ 
+CFL  is the timestep multiplying factor and is the main parameter controlling stability of the 
+program.  The length of timestep taken is given by  Δt  =  CFL.Δs/a0  where  Δs  is the 
+minimum length scale of a cell  and  a0  is the local speed of sound at inlet.  
+ 
+Local time stepping is always used based on the length scale of each cell and the local 
+average relative Mach number in the cell. The time steps are updated every 5 steps using the 
+current Mach number. 
+ 
+ For the “scree” scheme values of  CFL =  0.4 -> 0.5  are typical.  To give a margin of safety 
+it is usual to start with CFL = 0.4 and only to increase it if this is stable.  
+ 
+For the SSS scheme values of CFL = 0.7 are typical. Larger values are often stable but may 
+give oscillatory residuals without causing failure. In such cases the solution is usually 
+perfectly acceptable. 
+ 
+Values of CFL less than  0.2  should never be needed. 
+  
+If problems with stability occur then the first remedy tried should be a reduction in 
+CFL. 
+ 
+ITIMST determines the type of time step to be used.  The standard option is ITIMST = 3  
+which means that the timestep is evaluated for each individual cell, using the cell dimensions 
+and Mach number, and the standard “scree” scheme is used.  
+ 
+If ITIMST = -3  then the time step is evaluated as above but the SSS scheme is used. 
+ 
+If ITIMST = 4 or  -4  then SSS scheme is used and the coefficients are read in as data. 
+ 
+If ITIMST = 5 then the low Mach number option is used with the standard “scree” scheme. 
+This uses artificial compressibility to calculate the pressure from an artificially low speed of 
+sound, which is input as data. This speed of sound should be about twice the maximum 
+relative velocity expected in the flow. 
+ 
+If ITIMST = -5  then the low Mach number option is used with the SSS scheme. 
+ 
+If ITIMST = 6 then artificial compressibility is used with fully incompressible flow. The 
+required density is read in as data. 
+ 
+If ITIMST = -6  then the incompressible option is used with the SSS scheme. 
+
+
+
+NOTE 4    ARTIFICIAL VISCOSITY OR SMOOTHING FACTORS 
+ 
+
+The smoothing factor  SFT controls the smoothing in the pitchwise and spanwise directions  
+and SFX controls that in the streamwise (meridional) direction. The smoothing applied is 
+always combined second and fourth order smoothing with the proportion of 4th order being 
+input as FAC_4TH .  Hence the smoothing applied to the primary variables is 
+ 
+SFX*(1- FAC_4TH) *(second order value)  + SFX*FAC_4TH * (fourth order value) 
+ 
+Typical values of  FAC_4TH  are  0.8  with higher values giving less artificial viscosity.  
+ 
+Low values of  SFT  and SFX which are approximately equal to  0.01 x CFL  will usually 
+provide stability with negligible 'viscous' effect from the smoothing. Hence with CFL = 0.4 
+the smoothing factors would typically be 0.004  . Lower values are usually stable and give 
+even less influence of the artificial viscosity. 
+ 
+The input values of SFT and SFX  are  scaled by CFL/0.5  before they are used.  
+ 
+ An increase of smoothing should be the second resort  (after reducing  CFL)  if signs of 
+instability occur. 
+ 
+ The values of  SFT  and  SFX  may be  automatically increased during the first NCHANGE 
+steps to help overcome initial transients. The increase is  0.02  on starting and decreases to 
+zero after NCHANGE steps. Typically NCHANGE = NMAX/4 . 
+ 
+ 
+ 
+ 
+
+
+
+NOTE 5   NEGATIVE FEEDBACK TO LOCALISE ANY INSTABILITY 
+ 
+DAMP  controls the amount of negative feedback. 
+ 
+The maximum change of the variables in any cell on every iteration is limited if its magnitude 
+is  comparable to or greater than  [ DAMP  x  (the average change of the variable concerned)]. 
+This prevents local instabilities, such as might occur during the initial transient, growing and 
+causing failure of the whole calculation. It should have no effect at all on the steady solution.   
+ 
+A value of  DAMP  =  10  is usually acceptable and should be regarded as standard.  Low 
+values (= 5 ) give greater stability but sometimes produce incorrect results, e.g. premature 
+convergence,  and so should be used with caution. Higher values of  DAMP  will produce 
+faster convergence and  DAMP  > 25  means that damping has very little effect and may be 
+used with caution if the initial transients are weak. 
+ 
+ If the value of DAMP is set to be greater than 100 then the damping is not used. This is 
+usually possible with the “scree” scheme. However, use of DAMP will give usually faster 
+convergence with no loss of accuracy. 
+   
+ The value of DAMP is be automatically increased during the first NCHANGE steps in the 
+same way as SFT  and SFX. 
+
+ 
+
+
+
+NOTE 6        PITCHWISE AND SPANWISE GRID SPACING 
+ 
+ FR(K)  and  FP(I)  control the relative spacing of the grid lines in the spanwise and 
+pitchwise directions respectively.  Only the relative spacings are needed and the values input 
+are then divided by their sum to give the fraction of the height and gap occupied by each 
+element.  
+ 
+The change in relative spacing between adjacent grid points should not be greater than about  
+30%  ,  i.e.   F(I+1)/F(I)  < 1.3 ,  because the  smoothing routines assume uniform spacing and 
+will produce numerical errors for highly non-uniform spacing. Lower values than this, say 
+1.20,  are really preferable, especially when fine grids, i.e. a large number of pitchwise or 
+spanwise grid points, are used. 
+ 
+The streamwise grid spacing (J direction) should also not vary by a factor of more than about 
+1.3 between adjacent points. Again an expansion ratio of about 1.20 is preferred. 
+ 
+Overall very large variations  (~ 50:1) in grid spacing may be used as long as the spacing is 
+changed gradually as described above.  
+ 
+ Highly non-uniform grid spacing with the ratio of maximum to minimum spacing = about 20 
+are usual for viscous calculations. The larger this ratio and the larger the expansion ratio the 
+more closely the grid points will be clustered in the boundary layers. 
+ 
+The grid spacing is generated automatically within the program if FP(3) or FR(3) is set equal 
+to zero. In this case the spacing is varied as a geometrical progression away from both walls 
+with a ratio FR(1) or FP(1) between adjacent points up to a maximum spacing  = FR(2) or 
+FP(2) times the spacing at the wall. The same expansion ratio and same maximum are used 
+away from the other wall. The other values of FP and FR must still be input but are not used 
+and so can be set equal to zero. For example when using this option the values of FR(K) 
+might be: 
+ 
+ FR(1)  =  1.2  
+ FR(2)  = 25.0  
+ FR(3)  = 0.0  
+ All other values of FR(K) = 0.0 
+ 
+This will give a grid expansion ratio of 1.2  up to a maximum value of 25. All other values of 
+FR(K)  from K = 4  to  K = KM-1 (or FP(I) from I = 4 to IM-1) must be input but are not used 
+and so can be set equal to zero. 
+ 
+ 
+Use of too high a grid expansion ratio is one of the most frequent mistakes made by users of 
+the program.  
+
+
+
+NOTE  7    OUTPUT FILES 
+ 
+ 
+ IOUT(I)  where  I = 1 to 13,  determines which flow variables are to be sent to the file  
+“results.out”  on convergence or when output is requested via  NOUT. This is a formatted file 
+and so may be inspected on the screen or printed out . 
+ 
+ IOUT(I)  =  1 or 3  gives a full printout of the I'th  variable,  
+ 
+ IOUT(I) =  0  gives no printout.   
+ 
+ OUT(I)  =  2 gives a printout of the circumferentially mass averaged value of  
+ the variable. 
+ 
+The variables are only written to the file at spanwise grid point (K)  where  KOUT(K) = 1. If 
+KOUT(K) = 0 they are not output. 
+ 
+The variables are numbered as follows :  
+ 
+  1 =    Percentage change in Vm 
+  2 = Axial velocity 
+  3 = Absolute swirl velocity 
+  4 = Radial velocity 
+  5 = Static pressure 
+  6 = Relative Mach number 
+  7 = Absolute stagnation temperature 
+  8 = Meridional velocity 
+  9 = Swirl angle tan-1(Wq/Vm). 
+  10 = Meridional pitch angle tan-1(Vr/Vm) 
+  11 = Density 
+            12 = Ratio of P/ T**(γ/(γ-1)) to the inlet value at mid-span 
+    and mid-pitch. This should =1.0 for isentropic flow and 
+    can be thought of as the ratio of the local stagnation  
+    pressure to that that would be obtained in an insentropic 
+    process to the same temperature. 
+  13 = Pressure coefficient (P-PIN)/(P01-PIN) 
+ 
+The above output is sent to the file  “results.out”  on fortran unit 3 but a printed output file is 
+very long and is not usually very useful. Graphical inspection of the output is much more 
+efficient. The program can easily be edited to write out other properties if required. 
+ 
+A separate output file called “flow.out” is automatically sent to Fortran unit 7 on completion 
+of a run. This file contains the primary flow quantities, which can be used to compute any 
+other flow quantity. The file is unformatted and may be read and plotted by a plotting 
+program, it should be straightforward to interface it to different plotting routines, it is also 
+used as a restart file. An unformatted  file called “grid.out”  is automatically written to Fortran 
+unit 21  and is also used for plotting but not for the restart. 
+ 
+
+
+
+A formatted file called "global.plt"  used for plotting some one-dimensional mass averaged 
+flow quantities against meridional distance is sent to Fortran unit 11. 
+ 
+A formatted file named “stage.log” is sent to Fortran unit 4  and may be used for plotting the 
+convergence of the calculation against time step number. 
+ 
+A formatted file called “loss-co.plt” contains the loss of isentropic efficiency at every “J’ 
+station, based on the local mass averaged flow, is written to Fortran unit 23 at the end of any 
+run and is used to plot lost efficiency against meridional distance. 
+ 
+A formatted file called “mixbconds”  is written to Fortran unit 12.  This contains the mixed 
+out values of the flow properties at each mixing plane at every spanwise (K)  grid point. It 
+may be used to provide the inlet boundary conditions to a subsequent calculation on an 
+individual blade row or smaller group of blade rows. 
+ 
+The plotting programs that use some of these files are based on the Hgraph plotting package 
+and so are not publicly available. 
+ 
+
+
+
+NOTE 8     MULTIGRID  LEVELS 
+ 
+Three levels of multigrid are available in the standard program.  Unlike most multigrid 
+methods the block sizes used do not need to be increased in multiples of 2, in fact any block 
+sizes can be used but multiples of 3 seem to be about optimum.  
+ 
+IR, JR, KR  are the number of individual elements along the  I,J,K  sides of the smaller 
+multigrid blocks.   
+ 
+IRBB, JRBB, KRBB are the numbers of individual elements along the  I,J,K  sides of the 
+larger blocks.  
+ 
+ If  IR, JR, KR  are  all  = 1,  then the multigrid  is not used . 
+ 
+It is preferable but by no means essential to use an integral number of blocks in each 
+coordinate direction i.e. (IM-1)/IR, (IM-1)/(IRBB),   (JM-1)/JR,  (JM-1) /(JRBB),  (KM-
+1)/KR, and  (KM-1) /(KRBB) should all be integers.    
+ 
+The optimum block size depends on the problem, but  IR, JR, KR, all = 3 seems good,  as 
+does IRBB, JRBB, KRBB  all  = 9 . With these values suitable values of IM  and KM would 
+be 19, 28, 37, 46, 55, 64, 73 or 82 . The value of JM is not so critical. 
+ 
+ A third level of multigrid is formed from one-dimensional blocks which fill the whole pitch 
+and whole span. This is highly beneficial in speeding up convergence as it allows information 
+to be transmitted from outlet to inlet (and vice-versa) in a few time steps.  The block sizes for 
+this are generated automatically without any user input. Four of these “superblocks” are 
+generated, one upstream of the leading edge, two within the blade row and one downstream of 
+the trailing edge.  If this third level of multigrid is used then the second level blocks should 
+not also fill the whole pitch and span and so it may be desirable to use rather smaller blocks 
+for the first two levels of multigrid.  
+ 
+The time steps used for the multigrid blocks are estimated within the program but the 
+theoretical values need to be reduced to ensure stability. The scaling factors on the changes 
+produced by the multigrid are input as data in card 17. The greater these are the faster will be 
+convergence but the greater the tendency to instability. Hence the values should be 
+significantly less than unity. Typical safe values are FBLK1=0.4, FBLK2=0.2 and 
+FBLK3=0.10 , although larger values can often be used and if a calculation is going to be 
+repeated many times it might be worth experimenting with higher values.  The third level of 
+multigrid is sometimes prone to instability and should not be used with too high a scaling 
+factor. A factor 0f 0.1 is usual. 
+ 
+
+
+
+NOTE  9     STREAMWISE SURFACES FOR BLADE GEOMETRY INPUT. 
+ 
+The streamwise or cylindrical surfaces on which blade section data is input are not necessarily 
+true stream surface and are usually not the same as the surfaces which are used for the 
+computational mesh.  The blade geometry is input on NSECS_ROW surfaces and is then 
+interpolated onto NSECS_IN evenly spaced stream surfaces. In most cases NSECS_ROW 
+and NSECS_IN will be the same. The program will then interpolate in the NSECS_IN 
+surfaces to set up the calculation mesh with KM streamwise grid lines spaced as determined 
+by FR(K). The interpolation will be less accurate if the spacing of the input stream surfaces 
+does not vary smoothly and so the spacing between input stream surfaces should change 
+monotonically so that a graph of spanwise distance against input surface number is a smooth 
+curve. 
+ 
+IF INSURF = 0 then the first and last of the input surface will be the hub and casing 
+respectively. This is strongly preferred. If INSURF = 1 then the hub stream surface may be 
+input as a separate table of coordinates and the intersection of this with the quasi-orthogonal 
+lines of the other stream surfaces is found. If INSURF = 2 then the casing stream surface is 
+input as a separate table. If INSURF = 3 then both hub and casing stream surfaces are input in 
+this way. 
+ 
+It is strongly preferred that the first input section should be on the hub and the last section on 
+the casing of the machine. However, the hub and casing shapes can be input separately using 
+INSURF = 1, 2 or 3. In which case the program will find the intersection of the quasi-
+orthogonal lines with the hub and casing but this procedure is of limited accuracy and should 
+be avoided if possible. 
+ 
+ The number of sections required depends on how much the blade geometry changes along 
+the span. At least two sections are needed and that is sufficient for a blade with linear 
+variations in section. More than 5 sections are seldom required even for highly twisted blades. 
+ 
+For a quasi-3D calculation, with KM = 2, then only one stream surface is input and the other 
+surface is generated from a table of stream surface thickness against fraction of meridional 
+distance. 
+ 
+The points at which the blade coordinates are input on each streamwise surface determine the 
+intersection of the quasi-orthogonal surfaces (J = constant) with that section, and so the 
+number of input points (JM) must always equal the number of quasi-orthogonal surfaces 
+(JM).  Similarly, the leading edge point (JLE)  and trailing edge point  (JTE)  must be the 
+same on all surfaces. The relative spacing of the  J  points along each surface should also be 
+similar on all surfaces since the quasi-orthogonal surfaces need to intersect the meridional 
+plane in a smooth curve to allow good interpolation. 
+ 
+
+
+
+NOTE 10      DIMENSIONS OF DATA AND VARIABLES 
+ 
+The program works with dimensional quantities. Physical dimensions of input coordinates 
+and fluid properties should always be consistent.  If the dimensions are in metres then all fluid 
+properties must be in SI units. However, for a single stationary blade row the dimensions of 
+the blade do not affect the magnitude of the velocities and so any convenient units may be 
+used for the blade coordinates. The input geometrical data can be scaled by FAC1, FAC2  and 
+FAC3 and this allows the data to be converted from any other units to metres if necessary. 
+ 
+ If it is desired to use British units then they must be consistent, if lengths are in  ft  then 
+pressures must be in poundals/sq ft and temperatures in degrees R and the gas specific heat in   
+ft poundals/ deg R. 
+ 
+
+
+
+NOTE  11    SPECIFICATION OF THE MASS FLOW RATE 
+ 
+IN_FLOW  in  Card 22 may be used  to obtain a specified mass flow as input in card 26.  
+This option is not generally used as the mass flow forcing introduces artificial changes of 
+stagnation pressure. 
+ 
+ 
+ If IN_FLOW  =  3,  Then the required mass flow rate for the whole annulus 
+    or machine, in kg/sec, is read in Card 26.  
+ 
+ If IN_FLOW  =  2,  Then the local mass flow is forced towards the current 
+    average mass flow .  This may give faster convergence 
+    whilst the final mass flow should still be fixed by the 
+    pressure ratio. 
+ 
+ If IN_FLOW  =  0    Then the mass flow is determined by the input pressure 
+    ratio as is usual for Euler and Navier-Stokes solvers and 
+    is not forced in any way. 
+ 
+The mass forcing function is damped by a factor  RFLOW, input in Card 26,  for which a 
+typical value is  0.1  . However, when using IN_FLOW = 2, lower values of RFLOW, say = 
+0.01, should be used as high values can cause spurious entropy changes even when the mass 
+flow is only forced towards the average value.. 
+ 
+ When this option is used then the stagnation pressure change will be adjusted to make the 
+mass flow and specified pressure ratio compatible and conservation of stagnation pressure (or 
+entropy) cannot be expected.  Hence the calculated efficiency will not be correct when 
+IN_FLOW = 3 is used.  
+ 
+IN_FLOW =0 should be regarded as standard. However, IN_FLOW =2 may give faster 
+convergence, especially for centrifugal compressors. IN_FLOW=3 should not be used unless 
+the mass flow expected is known reasonably accurately, however, in difficult cases it may be 
+used to provide a good initial guess as a restart file. 
+ 
+ 
+
+
+
+NOTE 12       USE OF ISHIFT TO MATCH THE GRIDS AT MIXING PLANES 
+ 
+This is a special option for shifting the coordinates of the input data for multi-blade row 
+calculations so that the grids become contiguous at the mixing planes.  
+ 
+IF ISHIFT = 0  then the grid coordinates are used as read in with no changes. Note this 
+option must be not be used unless the mixing plane and next downstream plane were 
+made coincident in the raw data. 
+ 
+If ISHIFT =1 then the axial coordinates of all but the first blade row are automatically shifted 
+from their input values to make the blade rows line up on the hub stream surface so that the 
+first grid point on one row is coincident with the last grid point on the upstream row. Note 
+that only the axial coordinates on the hub are shifted so that the radial coordinates must 
+already be compatible, hence the option must be used with great care especially on radial flow 
+machines.  
+ 
+If ISHIFT = 2 then the blades not shifted but the grid spacing is made to vary geometrically 
+between the trailing edge of one blade row and the downstream mixing plane and between the 
+leading edge of the next row and the upstream mixing plane. The mixing plane and the next 
+downstream plane are automatically made to be coincident as is necessary. This option gives 
+a good grid between the blade rows. If it is required to shift the blades before forming the grid 
+this can be done using XSHIFT and RSHIFT in Cards 58  and 64.  
+ 
+If ISHIFT = 3 the grid spacing is again made to vary geometrically between the trailing edge 
+of one blade row and the downstream mixing plane and between the leading edge of the next 
+row and the upstream mixing plane, exactly as with ISHIFT = 2.  However, in the meridional 
+view, the grid will be formed by straight lines (conical stream surfaces) joining the trailing 
+edge of one blade row and the leading edge of the next row. This is also applied to the hub 
+and casing and so can cause small changes of annulus geometry. This option is necessary 
+when the surfaces on which the blade geometry is input are not continuous at the interface 
+plane. i.e. different surfaces are used in different blade rows. This is often the case if the data 
+input is on cylindrical surfaces. 
+ 
+If ISHIFT = 4 is the same as ISHIFT = 3  but the hub and casing shapes are not changed, i.e. 
+they are not made conical surfaces. This is better than ISHIFT = 3 unless the hub or casing 
+shapes are discontinuous. 
+ 
+ 
+The use of ISHIFT = 2 or = 4 is strongly recommended. 
+ 
+
+
+
+NOTE 13    GRID EXTRAPOLATION UPSTREAM AND DOWNSTREAM  
+  OF A BLADE ROW WHEN ISHIFT IS  NOT = 0 . 
+ 
+When a new grid is generated between blade rows by using ISHIFT = 2, 3 or 4 then the slope 
+of the periodic boundary (I=1 and I=IM) upstream and downstream of the blade can be 
+obtained either by extrapolating the blade centre line or by inputting the grid angles as data. 
+The choice between the two methods is determined by IF_ANGLES in CARD 52. 
+ 
+If the option to extrapolate the blade centerline is chosen, i.e.  IF_ANGLES = 0,  then the 
+extrapolation is from a point  NEXTRAP_LE  grid points downstream from the leading edge 
+to the leading edge and from a point  NEXTRAP_TE  points upstream of the trailing edge to 
+the trailing edge.  NEXTRAP_LE   and NEXTRAP_TE  are input in CARD 34 and are 
+usually taken to be 10 , but this may need to be increased for a highly cambered leading or 
+trailing edge. This is the usual option.  
+ 
+In some cases the blade centre line is highly curved at the leading or trailing edges and the 
+above extrapolation may give an incorrectly aligned grid.  In such cases the angle of the grid 
+to the meridional direction (i.e. to a line of constant theta coordinate) can be read in as data in 
+CARD 66.  BETAUP is the grid angle upstream of the leading edge. Downstream of the 
+trailing edge the grid angle varies from BETADWN1 at the trailing edge to BETADWN2 at 
+the downstream mixing plane or downstream boundary.  In most cases BETADWN2  and 
+BETDWN1  will be closely equal. This option is chosen if  IF_ANGLES in Card 52 was 
+greater than zero. 
+ 
+The grid angles are positive if a vector in the direction of the angle has a positive component 
+in the circumferential (theta) direction. 
+ 
+
+
+
+NOTE 14   DEFINITION OF COOLING FLOWS AND OF DIRECTION OF 
+  EJECTION 
+ 
+The cooling flows may be ejected through "patches" on the blade and endwall surfaces.  The  
+I, J and K grid points covered by the patch are input as data. The coolant stagnation 
+temperature, pressure, velocity and direction of ejection are taken to be constant over each 
+patch. The stagnation temperature and pressure that are input are those at which the coolant is 
+supplied to the blade, which will usually be at a lower radius than its point of ejection. The 
+increase of stagnation temperature and pressure due to work done on the coolant by a rotating 
+blade is calculated within the program using the input values of the coolant supply angular 
+momentum (RVT_IN)  and disc rotational speed (RPM_COOL). The velocity of ejection 
+relative to the blade is then calculated from the specified relative Mach number of the flow 
+leaving the cooling holes.  
+ 
+The direction of the cooling jet leaving the blades and endwalls is specified by two angles. 
+The first angle is that between the coolant jet and a plane tangent to the surface through which 
+it is being ejected.  This is more easily visualised as (90°  - the angle between the coolant jet 
+and the local normal to the surface). See Fig 20a. The second angle is that between the 
+projection of the coolant jet onto the surface and a line in the surface. The definition of this 
+line differs for blade surface or endwall ejection as described below.  
+ 
+For ejection through the blade suction or pressure surfaces the line is a line of constant radius 
+in the surface, i.e. the intersection of the blade surface with a cylindrical surface. See Fig 20b. 
+The angle is positive if the radial component of the jet velocity is positive. 
+ 
+For ejection through the hub or casing the line is a line of constant circumferential angle, θ, 
+drawn on the hub or casing, i.e. the intersection of the hub or casing with a plane of constant 
+circumferential angle  θ  passing through the machine axis. This angle is positive if the 
+circumferential (theta) component of the jet velocity is positive. 
+ 
+ 
+
+Jet
+Cooling jet
+
+Normal to surface
+
+Angle of jet
+to surface
+
+Tangent to surface
+
+Fig 2oa . Definition of the angle of the coolant 
+  jet to the blade  or endwall surface.  
+ 
+
+
+
+    
+ 
+ 
+ 
+ 
+
+    
+    Fig 20c. Endwall Coolant ejection angle. 
+ 
+ 
+ 
+These definitions of cooling flow direction have been chosen because they can be easily 
+applied to both axial and radial flow machines. 
+ 
+
+
+
+NOTE 15     USE OF A TRAILING EDGE CUSP. 
+ 
+If a fine grid is used around a blunt trailing edge (TE) it is usually found that the flow does 
+not separate soon enough at the start of the trailing edge circle. This leads to a locally low 
+pressure as the flow follows the highly curved surface and gives an unrealistic loading of the 
+TE. Usually this produces a negative load at the TE due to too low a pressure on the pressure 
+surface. In practice it is always found that, in subsonic flow, the loading falls to zero at the 
+TE.  
+ 
+To overcome this problem it is recommended that a cusp is fitted to the TE.  The cusp is a 
+triangular region behind the TE , as shown in the figure below, which may be regarded as an 
+extension of the blade surface, except that flow can pass through it. The cusp is made to carry 
+no tangential force and so does not contribute to the lift on the blade or the work done by it. 
+However, it does exert a meridional force on the blade, which is exactly balanced by the force 
+it exerts on the flow. This force can be thought of as a base pressure x the tangential thickness 
+of the TE. 
+ 
+The portion of the blade upstream of the trailing edge is modified so that any high curvature 
+due to the trailing edge circle is removed and the smooth surfaces before the start of the 
+curvature are extrapolated to the trailing edge point. The trailing edge point will then have a 
+finite thickness and this forms the base of the cusp. The cusp can then be aligned with either 
+the blade centre line (most usual) or with either blade surface and its length can be input in 
+terms of the number of grid points on it. A cusp is chosen by setting IFCUSP = 1 in Card 52.  
+ 
+If  IFCUSP = 1 then ICUSP, LCUSP  and LCUSPUP  are input in the next card, Card 53.  
+ ICUSP = 1  The cusp is aligned with the I=1 blade surface 
+ ICUSP = -1  The cusp is aligned with the I = IM blade surface 
+ ICUSP = 0   The cusp is aligned with the blade centre line. This is the usual 
+   choice. 
+ LCUSP  Is the number of cells on the cusp. 
+ LCUSPUP The cusp starts this number of grid points upstream of the  
+   trailing edge. 
+
+     
+
+
+
+NOTE 16  USE OF A BODY FORCE TO MAKE THE FLOW SEPARATE AT 
+  A THICK TRAILING EDGE 
+ 
+It is difficult to use a cusp on a blade row with a very thick trailing edge but if the grid is 
+refined around the trailing edge (TE)  the flow will usually not separate soon enough, leading 
+to a locally low pressure on the pressure surface and negative blade loading at the TE. This is 
+not physically realistic and in practice the flow usually separates at the start of the trailing 
+edge circle (blend point). To try to overcome this a TE separation can be forced by a body 
+force field allowing a fine mesh to be used around the TE. This is invoked by setting IFCUSP 
+= 2. 
+  
+The body force is applied over a region defined by NSEP_I1, NSEP_IM, N_WAKE  and 
+SEP_THICK all of which are input in Card 54. 
+ 
+ NSEP_I1 is the number of grid points upstream of the TE from which the blade I = 1 surface 
+is extrapolated. NSEP_IM is the same for the I = IM  surface .  The force field extends 
+N_WAKE grid points downstream of the trailing edge point , JTE , this value may be 
+negative to stop the force field before the TE.  The body force is applied over a region which 
+is more than (SEP_THIK x local blade thickness) inside the extrapolated region.  The 
+magnitude of the body force is proportional to  
+(1 – SEP_DRAG) and it acts in the direction of the local velocity.  Typically SEP_THIK = 
++0.01 (it may be positive or negative) and SEP_DRAG = 0.99 . Lower values of SEP_DRAG 
+lead to virtually stagnant flow in the affected region. 
+ 
+
+ Fig 15a. A fine grid around a thick trailing edge. 
+ 
+ 
+ 
+The body force is applied over the shaded region as illustrated below. The region may be 
+made wider in the pitchwise direction by making SEP_THIK  negative. 
+ 
+ 
+
+
+
+ 
+  
+
+Body force is 
+applied over 
+the shaded 
+region 
+
+Fig 15b. Extent of the body force 
+field. 
+
+   
+ 
+ 
+In practice this option is seldom used. It is easier to use a cusp with the option to extrapolate 
+the blade surface from upstream of the TE, so that there is no large change of curvature of the 
+blade surface and the TE itself has a finite thickness, then to form a cusp over several grid 
+points downstream of the TE.
+
+
+
+NOTE 17 THE MIXING PLANE MODEL 
+ 
+Development of a good mixing plane model is one of the most difficult problems in CFD. The 
+mixing plane is an artificial concept designed to permit steady calculations of blade rows 
+which are in relative motion due their rotation. It is generally assumed that the mixing plane 
+should allow the flow from an upstream blade row to mix out as if it were doing so in a long 
+duct with constant area and it should allow the flow to enter the downstream row as if it had 
+originated from a pitchwise uniform flow far upstream. Hence the mixing plane must transmit 
+the mixed out fluxes of mass momentum and energy from one blade row to the next whilst 
+causing the minimum distortion to the pitchwise non-uniform flows leaving the upstream row 
+and entering the downstream row. The mixing out of a non-uniform flow to a pitchwise 
+uniform flow is generally an irreversible process and although the fluxes of mass, momentum 
+and energy must be conserved in the mixing process the entropy will usually increase. This 
+increase in entropy represents the mixing loss which occurs in the real flow. However, It 
+should be emphasised that this is only a model of reality and it is not obvious that the mixing 
+loss, which occurs in the unsteady flow in a real machine, is the same as that at the mixing 
+plane. 
+ 
+Several different mixing plane model have been used during the development of MULTALL.  
+The latest one in MULTALL-14.6, MULTALL-15.2 and MULTALL_OPEN  is thought to be 
+the best yet. It is a combination of the latest one used in TBLOCK, which is robust and 
+permits reversed flows across the mixing plane, with the flux extrapolation method used in 
+earlier versions of MULTALL. The same model is now used in both MULTALL and 
+TBLOCK. 
+ 
+As in all previous versions there are two coincident “J’ grid surfaces at the mixing plane. 
+These are numbered  JMIX  and  JMIX+1. All flow properties are pitchwise uniform and 
+equal on both of these faces, although they will vary in the spanwise (K) direction. The 
+pitchwise uniform value is the mixed out value. The values are made equal on both surfaces 
+by treating the flow from JMIX to JMIX+1 as if it were between two faces of a one-
+dimensional finite volume cell, which extends over the whole pitch, and time stepping the 
+flow between them, exactly as for the cells in the rest of the grid. This ensures that when the 
+solution is converged the fluxes on the two coincident surfaces become equal. Since the flows 
+are pitchwise uniform this makes all the flow properties equal on the two faces. 
+ 
+The upstream and downstream faces of the mixing plane are decided by checking the flow 
+direction on each spanwise (K) grid surface and the direction can change from one surface to 
+the next. There is no presumption that the flow is in the positive J direction. Hence the model 
+can allow any amount of reverse flow. 
+ 
+For the cells upstream of the mixing plane, i.e. , assuming that the flow is in the positive J 
+direction, those between JMIX-1  and JMIX, the fluxes on their upstream face are calculated 
+as usual but the fluxes on their downstream face, i.e. on the mixing plane, JMIX, are obtained 
+by flux extrapolation. If the upstream face is  JMIX-1, this involves adding a fraction of the 
+difference between the local flux and the pitchwise averaged flux at JMIX -1  to the flux 
+calculated from the uniform flow at JMIX.  i.e.  
+ 
+ FLUXjmix = FLUXavg,jmix  + FEXTRAP x (FLUXjmix-1 – FLUXavg,jmix-1) 
+ 
+
+
+
+Hence the cells between JMIX-1  and JMIX  “see” only a fraction  (1-FEXTRAP) of the 
+uniform flux at the mixing plane.  FEXTRAP is input as data and a typical value is 0.8 - 0.9. 
+The more closely the grid lines JMIX-1 and JMIX are spaced the larger should be FEXTRAP, 
+values of 0.99 can be used for very close spacing. The value should be decreased for wide 
+spacing of the grid points when there will be more decay of the non-uniformity between the 
+grid points. 
+ 
+The pitchwise average flux at JMIX is not changed by this procedure and so the uniform flow 
+at JMIX  satisfies conservation of mass, momentum and energy between the non-uniform 
+flow at JMIX-1  and the uniform flow at JMIX , hence it is the mixed out flow corresponding 
+to the non-uniform flow at JMIX-1 . 
+ 
+A different model is used if FEXTRAP is set to zero. In this case there is no flux 
+extrapolation and the changes in the primary variables in the cells immediately upstream of 
+the mixing plane are then made pitchwise uniform. Note that it is the changes not the values 
+that are made uniform. The treatment then becomes the same as in TBLOCK-13 where it was 
+found to be exceptionally robust.  
+ 
+Flux extrapolation was found to be of little benefit and slightly destabilising on the 
+downstream side of the mixing plane and so is not used there. Since, with flow in the positive 
+J direction, JMIX+1 is on the mixing plane the next surface downstream of the mixing plane 
+is JMIX+2. The cells between JMIX+1 and JMIX+2 are updated using the pitchwise uniform 
+flux from the uniform flow at JMIX+1 and the pitchwise average flux at JMIX+2. Hence the 
+changes that points at JMIX+2 receive from their upstream cells is pitchwise uniform. 
+However, they also receive a pitchwise non-uniform change from the cells downstream of 
+them so the flow on them is not pitchwise uniform. This ensures conservation of mass 
+momentum and energy between the mixing plane and the downstream flow. This is the 
+treatment used in TBLOCK-13, it is robust and permits reversed flow but it does tend to make 
+the flow too uniform when applied close to a leading edge, in which case the entropy and 
+enthalpy downstream of the mixing plane may not be pitchwise uniform. This is overcome by 
+smoothing the flow at JMIX+2 towards an isentropic flow which is calculated using with the 
+local static pressure at JMIX+2, the pitchwise uniform enthalpy and entropy from JMIX+1 
+and the flow direction from a weighted average of the pitchwise uniform value at the mixing 
+plane and the average of the pitchwise varying values at JMIX+3  and JMIX+4 .  The fraction 
+of the average downstream angles used is  FANGLE, which is input as data in card 19, and 
+for which a typical value is 0.9 . Taking the average flow direction from JMIX+3  and 
+JMIX+4 was found to be more stable and not significantly less accurate than extrapolating the 
+flow direction from JMIX+3  and JMIX+4. On every time step the flow at JMIX+2 is 
+smoothed towards this isentropic value by a factor RFMIX, a low value of 0.01 is usually 
+sufficient for this, although higher values (say 0.05) are usually perfectly stable.  If RFMIX = 
+zero then there is no smoothing to isentropic flow and the treatment is the same as in 
+TBLOCK-13. 
+ 
+This procedure works well in all cases except those when the flow relative to the downstream 
+blade row is supersonic so that pressure waves, either expansions or shocks, run into the 
+mixing plane from downstream. In this case the pitchwise variation in flow direction 
+downstream of the mixing plane must be compatible with the Mach number variation, i.e. 
+they must satisfy the Prandtl-Meyer relationship. Whenever the downstream flow is 
+supersonic this relationship is used everywhere except at mid-pitch, where the angle is still set 
+
+
+
+by the angle extrapolation. This allows pressure waves to intersect the mixing plane without 
+reflection as illustrated in the Figure below. 
+ 
+The smoothing of points adjacent to the mixing plane has also been changed so that it does 
+not include values of the variables on the mixing plane, this ensures that the pitchwise 
+uniform values on the mixing plane do not influence the rest of the flow. This smoothing is 
+scaled by FSMTHB which is input as data and for which a typical value is 1.0, however, the 
+exact value does not seem to have much effect on the solution. 
+ 
+To use exactly the same mixing plane model as in TBLOCK-13 set both FEXTRAP and 
+RFMIX = 0.0 
+          
+
+Intersection of pressure waves 
+with the mixing plane. 
+
+  
+   
+The model described also works well with reverse flow across the mixing plane as illustrated 
+by the Figure below. 
+
+Reverse flow across 
+the mixing plane, which 
+is in the centre of the 
+bulge. 
+
+ 
+ 
+
+
+
+NOTE 18.  LOW MACH NUMBER SCHEMES 
+ 
+The “scree’ scheme works well at Mach numbers down to 0.25 but convergence becomes 
+slower and the solutions become less smooth below this. To run at very low and 
+incompressible Mach numbers a method based on artificial compressibility is used. 
+ 
+Instead of solving the continuity equation for the density it is effectively solved for the 
+pressure using an artificial density, ρs , as a conserved variable. This is used to calculate the 
+pressure using 
+
+    (P − P 2
+ref ) = S (ρs − ρs,ref )   
+
+  
+Pref is usually the inlet stagnation pressure, ρs,ref the inlet stagnation density. S is an artificial 
+speed of sound, whose value is set in the data and is typically about twice the maximum 
+relative velocity expected in the flow, much less than the true speed of sound. The time steps 
+are based on this artifi€cia l speed and so can be larger than the conventional steps by a factor 
+c/S. The changes in the artificial density are a factor (c/S)2 greater than those of the true 
+density and so are not so susceptible to rounding errors.  
+ 
+The energy and momentum equations are solved in the usual way to obtain ρE, ρVx, ρVr and  
+ρ rVθ.  
+ 
+The true density, ρ , undergoes only small changes and is only used to obtain the velocities 
+, V , from the mass fluxes, ρ V . Hence it can be calculated from the pressure and 
+temperature, using the gas law, with relaxation of the changes by a factor RF_PTRU , for 
+which a typical value is 0.01.  The true density is then used to obtain the velocity components 
+and the internal energy. If the flow is incompressible then the constant density is used. 
+ 
+The value of the artificial speed of sound is automatically updated every 5 time steps using  
+ 
+ Snew  =   VMAX  x  VS_VMAX 
+ 
+ S  = (1-RFS)*S  + RFS* Snew 
+ 
+where VMAX is the current maximum relative velocity in the flow and VS_VMAX is input 
+as data with a typical value = 2.0. RFS has a typical value = 0.002 so that the speed is only 
+updated over the order 1000 time steps. 
+ 
+The method works down to fully incompressible flow and can be used for multistage 
+calculations. However, the calculated efficiencies are not reliable because they use the true 
+density changes which are very small 
+ 
+
+
+
+NOTE 19    THE QUASI-3D BLADE-TO-BLADE MODEL 
+ 
+The code can be run with only two spanwise gridlines to predict the flow between two stream 
+surfaces. With cell corner storage it is necessary to have two spanwise grid points, one on 
+each stream surface, as illustrated in the Figure below. The coordinates of only one stream 
+surface are input and the spacing of the stream surfaces, i.e. the stream surface thickness, is 
+input as data. It is trivial to specify no flow through the stream surfaces but this is not 
+sufficient to ensure that the velocity vectors follow the mean surface. It is usual to apply a 
+body force acting perpendicular to the flow to ensure this. However, with two grid points it is 
+possible to apply the force via a pressure difference between the two surfaces. The mid point 
+of the two surfaces is regarded as a boundary between two half cells. Any flow crossing this 
+boundary will cause an increase in pressure in one half cell and an equal decrease in the other 
+half cell. This is in addition to the change in pressure calculated by the normal solution 
+procedure which is the same on both surfaces.  
+
+   
+The change in pressure is calculated in a time marching fashion using  
+ 
+
+s flux) Δt
+  ΔP = c 2 Δρ, where (mas
+
+Δρ =
+(cell volume)  
+
+     
+The mass flux is the flow crossing the mid-surface and  c  is an estimate of the local speed of 
+sound. This gradually builds up a pressure difference that drives the flow crossing the mid-
+surface t€o  zero. Since the change in pressure is equal and opposite on the two stream surfaces 
+this does not affect the streamwise component of the pressure force applied on the flow by the 
+surfaces. 
+ 
+The blade geometry is input in the usual way but only on a single stream surface. The stream 
+surface thickness is input separately as a table of relative thickness against fraction of 
+meridional distance.  Only the relative thicknesses are needed, the absolute values are not 
+used. 
+ 
+The pressure changes calculated by the equation above are factored by an input variable, 
+Q3DFORCE. The value of this does not seem to be very important, very low values, e.g. 0.1,  
+are stable but do not make the flow follow the stream surface very closely. A value of 1.0  is 
+standard, larger values are usually stable but offer no advantage. 
+ 
+Viscous forces are retained on the blade surfaces but not on the stream surfaces so that the 
+model gives a prediction of the blade profile loss. Run times for a single blade row are the 
+order of 10 seconds on a single processor. 
+
+
+
+NOTE 20   THE THROUGHFLOW MODEL 
+ 
+The program can run as a type of throughflow calculation if IM is set equal to 2 so that there 
+is only a single cell in the pitchwise direction. The full 3D blade geometry must be input in 
+the usual way. However, the number of grid points in the streamwise, J, and spanwise, K, 
+directions can be much less than for a 3D calculation. Typically 30 points streamwise and 15 
+points spanwise would be sufficient. This gives run times of only a few seconds per blade 
+row. 
+ 
+ As with the Q3D method (Note 19)  a mean stream surface is defined at the mid point of the 
+blade-to-blade gap as illustrated in the Figure below. Any flow crossing this surface causes an 
+increase in pressure on one blade surface and an equal decrease on the adjacent surface.  This 
+builds up an approximate blade loading which is updated every time step until the flow 
+follows the mean surface. The blade loading automatically acts perpendicular to the mean 
+surface and so does not generate loss. The loading distribution is only a crude approximation 
+to the true 3D loading but its overall magnitude will be compatible with the flow turning 
+imposed by the blade. This, coupled with the use of the full 3D blade geometry makes the 
+prediction of the effects of blade lean and sweep realistic. 
+ 
+As with the Q3D model the pressure changes are scaled by a factor, Q3DFORCE, which is 
+input as data. The exact value of this is not very important, the standard value is 1.0 but larger 
+values are usually stable and may give faster convergence. It is also found to be very 
+beneficial to smooth the blade surface pressures as otherwise they tend not to be smooth. The 
+smoothing also has the benefit of reducing the blade loading at the leading edge where it can 
+become very high due to a sudden change in flow direction. The smoothing factor, SFPBLD, 
+and number of smoothing passes, NSFPBLD, are input as data with standard values being 0.1  
+and 2 respectively. It should be emphasized that this smoothing only affects the blade loading 
+and not the average pressures acting on the flow.  
+ 
+
+    
+ 
+As with any throughflow method it is necessary to allow for any flow deviation empirically 
+and this is done by inputting a table of either the deviation angle or the exit flow angle against 
+fraction of span. The deviation between the flow angle and the blade centre line angle is 
+increased from zero at the leading edge to the specified value at the trailing edge, varying 
+linearly with the grid J index. The deviation causes the blade force to no longer act 
+perpendicular to the flow and so, to prevent spurious loss generation, it is resolved 
+perpendicular to the imposed flow. 
+ 
+
+
+
+ Most throughflow programs also input the loss coefficients empirically, however, in the 
+present code it is more convenient to maintain the shear stresses on the blade surfaces and so 
+allow the loss to be generated automatically. Clearly the wall functions are not valid when 
+there are only 2 grid points across the pitch but the wall function model which works by 
+specifying the value of Yplus at the grid point on the wall generates a skin friction coefficient 
+of   Cf  =  2/(Yplus)2 . This method is used when YPLUSWALL is set to be greater than 5.0 .  
+Inputting a value of YPLUSWALL = 20 gives a very typical value of Cf = .005, this acts on 
+the relative velocity which is the same on both blade surfaces and so produces realistic losses.  
+ 
+Tip leakage can still be modeled in this method but there is no pressure difference driving the 
+flow across the tip gap and so the leakage flow is not deflected by the blade and is only due to 
+the difference between the inlet flow direction and the blade surface angle, hence its 
+magnitude and loss generation is likely to be lower than in reality. 
+ 
+The flow along every stream tube is effectively one-dimensional with the local flow area 
+being that measured normal to the mean stream surface. This means that choking occurs as in 
+1D nozzle, the flow will choke at the point of minimum area and only normal shock waves 
+can be predicted in supersonic flow downstream of the throat. The method therefore cannot 
+predict the oblique shock waves that are common in turbomachines. This limitation is 
+common to all time-marching throughflow methods which specify the flow direction. When 
+used on a blade row with supersonic flow within the blade to blade passage, such as a 
+transonic fan, unrealistic shock waves and shock loss can be predicted.

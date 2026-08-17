@@ -1,0 +1,1486 @@
+﻿1 
+ 
+
+INSTRUCTIONS FOR PROGRAM STAGEN 
+ 
+Original version STAGEN-17.1  . 
+ 
+Latest version STAGEN-17.2 has one minor change as detailed on 
+page 3. 
+ 
+STAGEN is a blade geometry generation package that generates a data set for the 3D, 
+multistage, turbomachinery flow calculation program MULTALL. It is intended to be very 
+easy to use so that once the initial data file has been generated the blade geometry can be 
+changed and a new 3D calculation started in a matter of seconds. The program is written in 
+FORTRAN77 and should run on any machine with a FORTRAN compiler. The only 
+exception to this is the option to plot out the blade profiles generated. This uses the graphics 
+program HGRAPH, which is no longer available. If the program will compile without 
+HGRAPH then it may be run without plotting the profiles, simply answer “N” when asked if 
+you would like to plot the blade profiles. If it will not compile without HGRAPH delete lines 
+1448  to  1538 of the program, the lines to be deleted are clearly marked by comment cards. 
+It should be easily possible to replace the HGRAPH plots with a different plotting package. 
+An executable version of STAGEN, which will plot out the blade profiles, is supplied in the 
+folder entitled “PLOTTING PROGRAMS” but this may not work on all systems. 
+ 
+The blade geometry is defined using as few parameters as possible so that changes can be 
+made quickly and easily. The program contains many comments that may explain the use of 
+the input variables in more detail than these instructions. 
+ 
+ Not all the options available in MULTALL may be set by STAGEN since, for simplicity, 
+most parameters are set by default. Less common flow features, such as shroud leakage, 
+coolant flows, surface roughness, bleed flows, etc, which can be computed by MULTALL, 
+are not included and must be added to the output data set (“stage_new.dat”  or 
+“stage_old.dat”) manually if required. However, it would be easy to modify STAGEN to 
+output such features. Details of the data required are in the MULTALL manual. STAGEN 
+will produce output files for throughflow  or for quasi-3D blade-to-blade calculations if 
+either IM  or  KM is set equal to 2 . 
+ 
+Two different data sets are written by STAGEN. One, “stage_new.dat”, is for the new free 
+format input data used in MULTALL_OPEN if the file “intype” is set to “N”.  The other, 
+“stage_old.dat”, is formatted data, similar to that used in older versions of MULTALL, it 
+can be used with MULTALL_OPEN if the file “intype” is set to “O” . 
+ 
+The program produces an output file for a machine with a smooth annulus with tip clearances 
+allowed for by the pinched tip model. It can generate data sets for axial, mixed or radial flow 
+machines. The blades are first generated in two dimensions on a plane surface and are then 
+projected onto stream surfaces, which can be for an axial, radial or mixed flow machine. The 
+stream surfaces need not be true stream surfaces of the flow but can be any convenient 
+axisymmetric surface, e.g. a cylinder or a cone. When projected onto the stream surface the 
+‘x’ coordinate on the plane surface becomes the meridional distance and the ‘y’ coordinate 
+on the plane surface is transformed to the cylindrical angle, θ, using 
+
+r
+
+    θ −θ1 = ∫ dy / r  
+r1
+
+€ 
+
+
+
+2 
+ 
+
+so that a flat plate transforms into a log spiral. Hence, if the stream surface has a change of 
+radius the blade shape on the developed stream surface is not exactly the same as seen on the 
+plane surface but the loading should be similar to that of a two-dimensional blade with the 
+original profile.  
+ 
+At least two stream surfaces must be used to define a blade row but as many stream surfaces 
+as required can be used. The first stream surface must coincide with the hub of the machine 
+and the last must be the casing of the machine. STAGEN cannot handle the option to read in 
+the hub and casing surfaces separately from the stream surfaces, which is available in 
+MULTALL. 
+ 
+Multiple blade rows can be generated with the limits only imposed by the dimensioning of 
+MULTALL.  
+ 
+The blade geometry and flow conditions must be provided in a data file. When the program 
+is started the user is asked for the name of this input file with an option to select  
+“stagen.dat” as a default, however any other file name can be used if required. Two output 
+files are written for different versions of MULTALL. “stage_new.dat” is for the newer input 
+data format used in MULTALL-OPEN  and  “stage_old.dat” is for the older input format 
+which can also be used on MULTALL_OPEN and is almost, but not quite,  compatible with 
+previous versions of MULTALL, e.g. MULTALL_15. In addition a file called  “out” is 
+written to FORTRAN unit 8.  File “out” is not used by the flow calculation program but 
+contains blade coordinates and other useful information, which may be useful for finding any 
+mistakes in the input data file. 
+ 
+The names of the variables used in STAGEN are mainly the same as in MULTALL and are 
+defined in the MULTALL user manual and so the present manual should be read in 
+conjunction with the  MULTALL manual. However, most of the default variables are defined 
+in the Appendix to this manual, they are also defined by comments in the code. 
+ 
+In order to plot the blade profiles generated, STAGEN must be compiled and linked with the 
+graphics library HGRAPH. If HGRAPH is not available then delete lines 1448  to 1538  of 
+the program, it will then run but not plot out the blade profiles generated. It should be easy to 
+change the program to use a different plotting package. Alternatively an executable version 
+of STAGEN, which will plot out the blade profiles, is supplied in the folder entitled 
+“PLOTTING PROGRAMS”, but this may not work on all systems. Having compiled the 
+program, simply type the name of the executable and you will then be asked for the name of 
+the input file, which is usually stagen.dat . 
+ 
+Most of the control parameters of the program and the gas properties are set by defaults 
+within the program, these are used if the input variable “IFDEF” is set to 0. However, if 
+IFDEF is set to 1 then the values of most control parameters may be read in as part of the 
+data set. It is usually easier to edit the program and recompile it to change the default settings 
+rather than to make small changes to the data in the input file. 
+ 
+All data input is in free format so a value must be input for every variable, even if it is not 
+used. Blank lines are left in order to help the layout of the input data file and these must be 
+included where indicated. 
+ 
+All the input data must be in SI units.  i.e. lengths in metres, velocities in m/s, pressures in 
+N/m2 , temperatures in K. 
+
+
+
+3 
+ 
+
+STAGEN 17.2 
+ 
+STAGEN 17.2 differs from 17.1 only by reading in the gas constant and gas specific heat 
+ratio as the first line of input data. Previously these were set by default. Old stagen data sets 
+do not have this input and their first line of data is  Card 1A, “ IM , KM  “ , they should be 
+corrected by adding a new first line, containing the values of the gas constant, RGAS,  and 
+gas specific heat ratio, GAMMA, before using with STAGEN-17.2 or later.
+
+
+
+4 
+ 
+
+ 
+DETAILS OF THE INPUT FILE  REQUIRED 
+
+BY STAGEN 
+ 
+The data input is in a series of lines of data, which will be referred 
+to as “CARDS” . Some “CARDS”  are blank lines which are just 
+there to space out the data, but they must still be input. 
+ 
+All data is in Free Format . 
+ 
+On starting the program you will be asked for the name of the 
+data input file with an option to choose “stagen.dat” as a default. 
+ 
+************************************************************************* 
+ 
+CARD  1 
+ 
+
+This is new to version 17.2 
+ 
+
+RGAS, GAMMA 
+  
+
+RGAS The gas constant in J/kg K.  A typical 
+value for air is 287.5 
+
+ 
+GAMMA The gas specific heat ratio. The value 
+
+for air is 1.4. 
+************************************************************************* 
+ 
+CARD 1A    
+IM, KM 
+ 
+
+IM   Is the number of grid points in the pitchwise 
+direction. Typically  in the range 19 -> 64 
+
+ 
+KM   Is the number of grid points in the spanwise 
+
+direction. Typically  in the range 19 -> 64 . 
+************************************************************************* 
+
+
+
+5 
+ 
+
+CARD 2    
+FPRAT, FPMAX 
+ 
+
+FPRAT  Is the grid expansion ratio in the pitchwise 
+direction. This should be less than 1.4. A 
+typical value is 1.25 . 
+ 
+
+FPMAX    Is the ratio of the maximum grid spacing in 
+the pitchwise direction to that of the first 
+two grid points. Typically in the range  5 -> 
+25  . 
+
+************************************************************************* 
+ 
+CARD 3 
+FRRAT, FRMAX 
+ 
+
+FRRAT     Is the grid expansion ratio in the spanwise   
+direction. Less than 1.4. Typical value = 1.25 
+
+ 
+FRMAX    Is the ratio of the maximum grid spacing in 
+
+the spanwise direction to that at the first 
+two grid points. Typically in the range 5 -> 
+25. 
+
+************************************************************************* 
+ 
+CARD 3A  
+IFDEF 
+ 
+
+If IFDEF = 0  the default control parameters are set within 
+the program. If IFDEF is not zero then these 
+parameters must be read in from the next 11 
+cards, 3B  to 3L .  
+
+ 
+ 
+
+************************************************************************* 
+CARDS 3B to 3L ARE ONLY NEEDED IF “IFDEF” IS NOT ZERO 
+SEE THE MAIN 3D PROGRAM (MULTALL) INSTRUCTIONS FOR THE 
+MEANING OF THE PROGRAM CONTROL PARAMETERS SET BY THEM. 
+************************************************************************* 
+
+
+
+6 
+ 
+
+CARD 3B    
+NMAX, NCHANGE 
+************************************************************************* 
+    
+CARD 3C       
+IN_VTAN, IN_PRESS, INPUT, INVR, ITIMST, ISMTH, IPOUT, INFLOW, 
+NLOS, ILOS, IF_RESTART, IOUTST, IBOUND, ISHIFT 
+************************************************************************* 
+ 
+CARD 3D   
+IR, JR, KR, IRBB, JRBB, KRBB, NSBUP, NSBON, NSBDN, IFMIX, 
+NEWGRID 
+********************************************************************** 
+    
+CARD 3E 
+JTRANS, JTRANP, JTRANH, JTRANT 
+********************************************************************** 
+ 
+CARD 3F 
+IF_CUSP, ICUSP, LCUSP, LCUSPUP, IFANGLES, IF_DESIGN 
+********************************************************************** 
+ 
+CARD 3G  
+CP, GA, CFL, SFT, SFX, FAC_4TH, MACHLIM 
+************************************************************************* 
+   
+CARD 3H 
+DAMP, FBLK1, FBLK2, FBLK3, SFEX, CLIM, RFIN 
+************************************************************************* 
+ 
+CARD 3I 
+IFMIX, RFMIX, FSMTHB, FEXTRAP, FANGLE, NEXTRAP_LE, 
+NEXTRAP_TE 
+************************************************************************* 
+CARD 3J 
+FSTURB, TURBVIS_DAMP, TURBVIS_LIM, REYNO, PRANDTL, 
+FR_VIS, FTRANS, YPLUSWALL, YPLAM, YPTURB 
+************************************************************************* 
+
+
+
+7 
+ 
+
+CARD 3K 
+FAC_STMIX, FAC_ST0, FAC_ST1, FAC_ST2, FAC_ST3, FAC_SFVIS 
+************************************************************************* 
+    
+CARD 3L 
+FRACPB, FRACPW, FRACPUP, FRACPIN, FRACPLE, FRACPTE, 
+FRACPDWN  
+************************************************************************* 
+************************************************************************* 
+END OF NON_DEFAULT DATA INPUT FOR MAIN PROGRAM 
+CONTROL PARAMETERS 
+************************************************************************* 
+
+
+
+8 
+ 
+
+ 
+CARD 4 
+NROWS, NOSECT 
+ 
+
+NROWS    Is the number of blade rows to be designed. 
+ 
+
+NOSECT   Is the number of blade sections to be 
+ designed per row. This must be the same for 
+all rows. 
+
+************************************************************************* 
+ 
+ 
+CARD 5 
+FAC_SCALE 
+ 
+
+FAC_SCALE  Is a scaling factor that will be used to 
+multiply all blade coordinates. Set = 1.0 if 
+the blade is to be generated at full scale. 
+
+************************************************************************* 
+ 
+
+
+
+9 
+ 
+
+REPEAT ALL CARDS 6 TO 28 FOR EACH 
+BLADE ROW 
+ 
+ 
+CARD 6  Blank Line 
+CARD 7  Title of the blade row, any alphanumeric  
+    characters in rows 1 to 72. 
+CARD 8  Blank Line 
+************************************************************************* 
+ 
+CARD 9 
+NINTUP, NINTON, NINTDN 
+ 
+
+NINTUP   Number of grid spacings requested upstream 
+of the leading edge. 
+
+ 
+NINTON  Number of grid spacings requested on the 
+
+blade surface. 
+ 
+
+NINTDN  Number of grid spacings requested 
+downstream of the trailing edge. 
+
+ 
+ 
+Note: These are the number of grid spacings which = number of 
+grid points -1 
+************************************************************************* 
+
+
+
+10 
+ 
+
+ 
+CARDS 10 
+XFRAC(I), RELSPCE(I) 
+  
+
+A table of I values of the relative  meridional spacings of 
+the final grid as a function of the meridional chord.  
+ 
+XFRAC(I) Fraction of meridional chord. 
+RELSPCE(I)  Relative grid spacing at this x value. 
+ 
+
+The table is read until a value of XFRAC(I) greater than 0.99999 is 
+found  so the meridional chord must vary from 0.0 to 1.0. The 
+relative spacings can be in any units as long as they are all relative 
+not absolute values.  Typically about 5 values of XFRAC and 
+RELSPCE are sufficient to define the final grid spacings on the 
+blade. 
+
+****** ************************************************************************* 
+ 
+CARD 11   
+NBLADE 
+ 
+
+NBLADE  Is the number of blades in the current blade  
+  row. 
+
+*************************************************************** 
+ 
+ 
+
+
+
+11 
+ 
+
+ 
+CARD 12   
+RPMROW, PUPROW, PLEROW, PTEROW, PDROW 
+ 
+
+RPMROW  Is the rotational speed of the blade   
+  row. Positive if the rotation is in the theta 
+  direction. It may be negative. 
+
+ 
+PUPROW  Is a guess of the static pressure at    
+
+  mid-span upstream of the blade row, in  
+  N/m2. 
+
+ 
+PLEROW  Is a guess of the static pressure at    
+
+ mid-span at the leading edge of the   
+ blade row, in N/m2. 
+
+ 
+ 
+
+PTEROW Is a guess of the static pressure at   
+ mid-span at the trailing edge of the blade 
+row, in N/m2. 
+
+ 
+PDROW  Is a guess of the static pressure at    
+
+ mid-span at exit from the blade row, in   
+ N/m2. 
+
+ 
+ 
+Note: These pressures are only used for the initial 
+guess. They should not influence the final solution but a 
+better guess wil l give faster convergence. 
+***************************************************************
+
+
+
+12 
+ 
+
+CARD 13   
+KTIPS, KTIPE, JROTHS, JROTHE, JROTTS, JROTTE 
+FRACTIP, RPMHUB 
+ 
+    
+
+KTIPS    Is the K value at which tip clearance   
+  starts. Set = 1 for hub clearance. 
+
+ 
+KTIPE     Is the K value at which tip clearance   
+
+  ends. Set = KM for tip clearance. 
+ 
+
+JROTHS   Is the J value at which the hub starts  
+  to rotate at RPMHUB. 
+ 
+
+JROTHE   Is the J value at which the hub stops  
+  rotating at RPMHUB. 
+ 
+
+JROTTS   Is the J value at which the casing   
+  starts rotating at RPMROW. 
+ 
+
+JROTTE   Is the J value at which the casing   
+  stops rotating at RPMROW. 
+ 
+
+FRACTIP  Is the tip or hub clearance as a    
+  fraction of the blade span. 
+ 
+
+RPMHUB  Is the rotational speed of the hub in   
+   between the J points JROTHS, JROTHE. 
+
+    in RPM . 
+************************************************************************* 
+ 
+Note only a singe value of tip clearance can be used. To vary the clearance 
+from leading edge to trailing edge, edit the final data set.
+
+
+
+13 
+ 
+
+************************************************************************* 
+REPEAT CARDS   14  TO  28  for each of the NOSECT 
+blade sections on the current blade row. 
+************************************************************************* 
+ 
+CARD 14 Blank line 
+CARD 15  Title of the current blade section. Any 
+    alphanumeric characters in columns 1 
+    to 72. 
+CARD 16    Blank line 
+************************************************************************* 
+ 
+CARD 16A  
+INTYPE 
+ 
+
+INTYPE = 0. Means that the blade section is specified by 
+a set of (x,y) coordinates going around the 
+blade surface. These are input as data in 
+CARD 16C. 
+
+ 
+INTYPE =1. Means that the blade section is generated by 
+
+specifying its centre line slope and a 
+mathematically generated thickness 
+distribution. This is the most usual type of 
+input, 
+
+ 
+INTYPE = 2. Means that the blade section is generated by 
+
+specifying its centre line slope and its 
+tangential thickness above and below the 
+centre line at as many points as required 
+along the axial chord. 
+
+ 
+INTYPE = 3.  Means that the blade is section specified by 
+
+the surface slopes of its upper and lower 
+surfaces at as many points as required along 
+the axial chord. 
+
+*********************************************************************** 
+ 
+
+
+
+14 
+ 
+
+ 
+CARD 16B THIS IS ONLY NEEDED IF INTYPE = 0 
+NPOINTS , NXPTS, IFCLOCK, IFREV 
+ 
+
+NPOINTS Is the number of points around the blade at 
+which coordinates will be given when INTYPE 
+= 0. 
+ 
+
+NXPTS  Is the number of points on the camber line 
+that will be used to generate the final blade. 
+This should be far more than the number of 
+grid points. Typically 200 points should be 
+enough. 
+ 
+
+IFCLOCK The points to be input go clockwise round 
+the blade if IFCLOCK = 0, anticlockwise if    
+IFCLOCK = 1. 
+ 
+
+IFREV   The upper and lower surfaces are inverted if 
+IFREV = 1, no changes if IFREV = 0 . 
+
+*************************************************************** 
+ 
+
+CARD 16 C  THIS IS ONLY NEEDED IF  INTYPE = 0 
+ 
+A table of NPOINTS values of XIN , YIN  
+ 
+ 
+
+XIN(N), YIN(N)   The x,y coordinates of points on the 
+blade surface. Typically 100 points are 
+needed to define a blade accurately with 
+close clustering around the leading and 
+trailing edges. 
+
+*************************************************************** 
+ 
+
+
+
+15 
+ 
+
+ 
+IF INTYPE IS NOT = 0  READ IN CARDS 17- 20 . 
+JUMP TO CARD  21 IF INTYPE = 0.  
+************************************************************************ 
+ 
+CARD 17    
+NPIN, NXPTS, NSMOOTH 
+ 
+
+NPIN   Is the number of points in the table of camber 
+line slopes , blade thicknesses, etc, input in 
+the next card. Typically = 5 ->10 points are 
+sufficient. 
+
+ 
+NXPTS  Is the number of points on the camber line 
+
+that will be used to generate the blade. 
+Typically 200 points should be enough. 
+
+ 
+NSMOOTH Is the number of times that the input camber 
+
+line slope, blade thickness or surface slope 
+input above will be smoothed.  Typically = 2. 
+
+************************************************************************* 
+ 
+IF INTYPE = 1  READ CARD 18 
+ 
+CARD 18    
+FRAC(N), SLOPE(N), N= 1, NPIN 
+ 
+
+FRAC(N) Is the fraction of meridional chord at which 
+the camber line slope is input.    
+ The first value must be 0.0 and the   
+ last value 1.0 . 
+
+ 
+SLOPE(N) Is the camber line slope in degrees at 
+
+FRAC(N). The slope is positive if a vector 
+along the camber line points in (i.e. has a 
+positive component in) the direction of 
+rotation. 
+
+*************************************************************** 
+ 
+
+
+
+16 
+ 
+
+ 
+ 
+IF INTYPE = 2 READ CARD 18A 
+ 
+CARD 18A 
+FRAC(N), SLOPE(N), TKH(N), TKL(N) N= 1, NPIN 
+ 
+
+FRAC(N) Is the fraction of meridional chord at which 
+the camber line slope is input.    
+ The first value must be 0.0 and the   
+ last value 1.0 . 
+
+ 
+SLOPE(N) Is the camber line slope in degrees at 
+
+FRAC(N). The slope is positive if a vector 
+along the camber line points in (i.e. in the 
+direction of increasing meridional distance) 
+has a positive component in the direction of 
+rotation. 
+
+ 
+TKH(N)  The blade tangential thickness above the 
+
+centre line as a fraction of the meridional 
+chord. 
+
+ 
+TKL(N)  The blade tangential thickness below the 
+
+centre line as a fraction of the meridional 
+chord. 
+
+********************************************************************** 
+
+
+
+17 
+ 
+
+ 
+IF INTYPE = 3 INPUT CARD 18B 
+
+ 
+CARD 18B 
+FRAC(N), SLPUP(N), SLPLOW(N)  ,  N = 1, NPIN 
+ 
+
+FRAC(N) Is the fraction of meridional chord at which 
+the camber line slope is input.    
+ The first value must be 0.0 and the   
+ last value 1.0 . 
+
+ 
+SLPUP(N) Is the slope of the upper blade surface in 
+
+degrees. 
+ 
+SLPLOW(N) Is the slope of the lower blade surface in 
+
+degrees. 
+ 
+
+Note.  It is more difficult to generate a good blade shape using 
+this method but it does give most control over the 
+surface curvature. 
+
+*************************************************************** 
+
+
+
+18 
+ 
+
+ 
+CARD 19 must be input for INTYPE = 1, 2, 
+or 3 but some of the values are not used 
+unless INTYPE = 1. 
+ 
+CARD 19 
+TKLE, TKTE, TKMAX, XTMAX, XMODLE, XMODTE, TK_TYP 
+ 
+
+TKLE    Is the leading edge thickness as a fraction of 
+the blade chord. Card 20 decides which 
+chord it is based on. 
+
+ 
+TKTE   Is the trailing edge thickness as a fraction of 
+
+the blade chord. Card 20 decides which 
+chord it is based on. 
+
+ 
+TKMAX   Is the maximum thickness (as a fraction of 
+
+the blade chord) of the final blade section. 
+  Card 20 decides which chord it is based on. 
+
+ 
+XTMAX   Is the position of maximum thickness as a 
+
+fraction of the blade axial chord. 
+ 
+
+XMODLE Is the fraction of axial chord over which the 
+leading edge will be rounded. Typically = 
+0.02 . 
+
+ 
+XMODTE Is the fraction of the axial chord over  
+
+  which the trailing edge will be rounded.  
+  Typically = 0.02 . Set = 0 for a square  
+  trailing edge of thickness TKTE. 
+
+ 
+TK_TYP   Controls the shape of the thickness 
+
+distribution.  Typically = 2.0 . Large values 
+give a "square " thickness distribution.  A 
+ value 1.0 gives a "triangular" distribution. 
+Non integer values may be used, e.g. 
+TK_TYP = 1.8 is quite common. 
+
+*************************************************************** 
+
+
+
+19 
+ 
+
+ 
+ 
+CARD 20   
+FCHORD, FPERP, FTKSCALE 
+
+ 
+FCHORD  Determines whether the above thicknesses 
+
+are fractions of the axial chord or of the true 
+chord. FCHORD = 1 means they are fractions 
+of the true chord. FCHORD = 0 means 
+fractions of the axial chord. 
+
+ 
+ 
+
+FPERP  When INTYPE = 1 this controls whether the 
+thickness distribution is added perpendicular 
+to the camber line or in the tangential 
+direction . FPERP =  1 uses the perpendicular 
+thickness and is most usual. However, for very 
+thick and high camber blades this may cause 
+problems and so it may be necessary to set 
+FPERP = 0 to use a tangential thickness 
+distribution. 
+
+ 
+ 
+
+FTKSCALE Is used to decide whether to scale the 
+maximum blade thickness to the value TKMAX 
+input above. This is useful if INTYPE = 2 or 3. 
+It is not used if INTYPE = 0. FTKSCALE = 1 
+means the thicknesses are scaled. FTKSCALE 
+= 0 means the thicknesses are not scaled. 
+
+*************************************************************** 
+ 
+ 
+ 
+ 
+
+
+
+20 
+ 
+
+CARD 21   
+ROTN, XROT, YROT 
+ 
+    
+
+ROTN   Is the angle by which the blade just 
+generated will be rotated in the clockwise 
+sense about the point XROT,YROT.  In 
+degrees. 
+
+ 
+XROT   Is the X coordinate of the point about which 
+
+the blade will be rotated as a fraction of the 
+axial chord with the origin at the leading 
+edge. 
+
+ 
+YROT  Is the Y coordinate of the point about which 
+
+the blade will be rotated as a fraction of the 
+axial chord with the origin at the leading 
+edge. 
+
+********************************************************************* 
+ 
+CARD 22    
+XCUP, XCDWN, BETUP, BETDN 
+    
+
+XCUP    The axial extend of the grid upstream of the 
+blade as a fraction of the axial chord. 
+Typically = 0.5 . 
+
+ 
+XCDWN  The axial extend of the grid downstream of 
+
+the blade as a fraction of the axial chord. 
+Typically = 0.5 . 
+
+ 
+BETUP   The angle of the upstream grid extension. 
+
+Usually the same as the camber line angle at 
+the leading edge. In degrees. May be 
+negative.  
+
+ 
+BETDN   The angle of the downstream grid extension. 
+
+Usually the same as the camber line angle at 
+the trailing edge. In degrees. May be –ve  . 
+
+************************************************************************ 
+
+
+
+21 
+ 
+
+CARD 23   BLANK CARD 
+************************************************************************ 
+ 
+CARD 24    
+NSSURF 
+     
+
+NSSURF   Is the number of points is the table of 
+stream surface coordinates to be input in the 
+next card. The final blade coordinates will be 
+generated on this stream surface. The 
+stream surface used need not be a true 
+stream surface of the flow, any convenient 
+axisymmetric surface (such as a conical 
+surface) can be used. However, in many 
+cases its coordinates may conveniently be 
+taken from a throughflow solution. Typically 
+about 8 points should be sufficient. 
+Preferably one point should coincide with the 
+blade row leading edge and one with the 
+trailing edge. 
+
+************************************************************************ 
+ 
+
+CARD 25    
+XRIN(N) ,  N = 1,NSSURF 
+ 
+
+XRIN(N)  Is the axial coordinate of the N th point on 
+the stream surface. Note the first point 
+must be upstream of the leading edge grid 
+point and the last point must be 
+downstream of the trailing edge grid point 
+on the blade section being generated. 
+
+************************************************************************ 
+ 
+ 
+  
+
+
+
+22 
+ 
+
+CARD 25a   
+RIN(N) ,  N = 1,NSSURF 
+ 
+     
+
+RIN(N)    Is the radius of the N th point on the stream 
+surface. See comments on the last card. 
+
+************************************************************************ 
+ 
+CARD 26    
+XLE, XTE, RLE, RTE  
+ 
+ 
+
+XLE    Is the x coordinate of the leading edge of 
+the final blade.  
+
+ 
+XTE   is the x coordinate of the trailing edge of the 
+
+final blade. 
+ 
+
+RLE   Is the radial coordinate of the leading edge 
+of the final blade. 
+
+ 
+RTE  Is the radial coordinate of the trailing edge  
+  of the final blade. 
+
+ 
+   
+NOTE: All these points must lie on the stream surface 
+
+input in the last two cards. 
+************************************************************************ 
+
+
+
+23 
+ 
+
+CARD 27    
+FCENTROID, FTANG, FLEAN, FSWEEP, FAXIAL 
+ 
+These cards determine the final stacking of the section 
+generated.  
+ 
+
+FCENTROID  If this = 1 the blade is stacked with its 
+centroid on a radial line through the centroid 
+of the hub section. If FCENTROID  = 0.0 the 
+blade is stacked on its leading edge.  FTANG, 
+FLEAN, FSWEEP, FAXIAL will then make 
+changes relative to this stacking. 
+ 
+
+FTANG   The blade section is leaned in the tangential 
+(i.e. circumferential) direction by a distance 
+= FTANG x its meridional chord. FTANG may 
+be positive or negative. 
+ 
+
+FLEAN   The blade section is leaned in the direction 
+perpendicular to its chord line by a distance 
+FTANG x its meridional chord. 
+ 
+
+FSWEEP  The blade section is swept along its chord 
+line in the downstream direction by FSWEEP 
+x its meridional chord. 
+ 
+
+FAXIAL   The blade section is moved in the axial 
+(downstream) direction by FAXIAL x its 
+meridional chord. 
+ 
+ 
+
+NOTE:   FTANG, FLEAN, FSWEEP AND FAXIAL   should all be set 
+to zero and FCENTROID to 1 to obtain a stacking 
+through the centroids of the blade sections. 
+
+ 
+ The stacking options cannot be used for blades where 
+
+the radius change between the leading and trailing edge 
+is larger than the axial extent of the blade. To prevent 
+any stacking changes in this case set FCENTROID = 2.0 . 
+
+************************************************************************ 
+
+
+
+24 
+ 
+
+ 
+CARD 28    
+FSCALE, FCONST 
+ 
+
+After stacking the blade can be scaled to increase it local chord. 
+This can also be done by changing the coordinates XLE, XTE in 
+card 26. The blade remains on the stream surface. 
+ 
+
+FSCALE  The blade meridional chord is multiplied by 
+   FSCALE. 
+
+ 
+FCONST  The scaling is done so that a point at a 
+
+fraction FCONST of the meridional chord 
+from the leading edge remains fixed. 
+ 
+
+Note that this can be used to give local sweep to the blade, for 
+example by keeping the trailing edge fixed and increasing the 
+meridional chord. 
+
+ 
+************************************************************ 
+END OF DATA INPUT ON THE CURRENT BLADE SECTION 
+RETURN TO CARD 14 TO START THE NEXT SECTION OF THE 
+CURRENT BLADE ROW. 
+************************************************************ 
+ 
+ 
+ 
+ 
+************************************************************ 
+END OF DATA INPUT ON THE CURRENT BLADE ROW 
+RETURN TO CARD 6 TO START THE NEXT BLADE ROW, UNLESS 
+THIS IS THE LAST ROW, IN WHICH CASE MOVE ON TO CARD 29. 
+ 
+************************************************************ 
+
+
+
+25 
+ 
+
+ 
+CARD  29   BLANK LINE 
+************************************************************************ 
+ 
+CARD   29A   
+PUPHUB, PUPTIP, PDHUB, PDTIP 
+ 
+
+PUPHUB  Is a guess of the inlet pressure on the hub at 
+the upstream boundary of  the whole 
+calculation, in N/m2. 
+
+ 
+PUPTIP   Is a guess of the inlet pressure on the casing 
+
+at the upstream boundary of the whole 
+calculation, in N/m2. 
+
+ 
+PDHUB   Is the static pressure on the hub at the 
+
+downstream boundary of the whole 
+calculation, in N/m2. This is a boundary 
+condition whose use is determined by IPOUT. 
+
+ 
+PDTIP   Is the static pressure on the casing at the 
+
+downstream boundary of the whole 
+calculation, in N/m2. This is a boundary 
+condition whose use is determined by IPOUT. 
+
+ 
+ 
+
+************************************************************************ 
+ 
+CARD 30   BLANK CARD 
+************************************************************************ 
+ 
+CARD 31   
+NINLET 
+ 
+
+NINLET  Is the number of spanwise points at which  
+  the inlet flow conditions are to be specified. 
+
+   Also used for the exit pressure profile if  
+  requested. 
+
+************************************************************************ 
+
+
+
+26 
+ 
+
+ 
+ 
+ 
+CARD 32   
+FSPAN(I) I = 1,NINLET 
+ 
+
+FSPAN(I)  Is the fraction of the span at which the inlet 
+or exit conditions are specified in the next 
+few cards. 
+
+************************************************************************ 
+ 
+CARD 33   
+POIN(I) I = 1, NINLET 
+ 
+
+POIN(I)   Are the inlet stagnation pressures at the 
+above fractions of the span. In N/m**2 
+
+************************************************************************ 
+ 
+CARD 34  
+TOIN(I) I = 1, NINLET 
+ 
+
+TOIN(I)   Are the inlet stagnation temperature, in K, 
+at the above fractions of the span. 
+
+************************************************************************ 
+ 
+CARD 35   
+VTIN(I) I = 1, NINLET  
+ 
+
+VTIN(I)  Is the inlet swirl velocity at    
+  the above fractions of the span. In m/s . 
+
+************************************************************************ 
+ 
+CARD 36   
+ 
+VMIN(I) I = 1, NINLET  
+ 
+
+VMIN(I)  Is the inlet meridional velocity at   
+  the above fractions of the span. In m/s . 
+
+************************************************************************ 
+
+
+
+27 
+ 
+
+ 
+ 
+CARD 37 
+B1IN(I) I = 1, NINLET 
+ 
+
+B1IN(I)   Is the inlet meridional yaw angle, 
+  Tan -1(Vt/Vm) , at the above fractions of the 
+
+span.  Positive if the swirl is in the direction 
+of rotation. 
+
+************************************************************************ 
+ 
+CARD 38   
+ 
+BRIN(I) I = 1, NINLET  
+ 
+
+BRIN(I)   Is the inlet meridional pitch angle , 
+  Tan -1(Vr/Vx) ,  at the above fractions of the 
+
+span. 
+************************************************************************ 
+ 
+
+ 
+ 
+
+************************************************************************ 
+************************************************************************ 
+ 
+
+END OF INPUT DATA TO STAGEN 
+ 
+
+************************************************************************ 
+************************************************************************ 
+
+
+
+28 
+ 
+
+ 
+APPENDIX. LIST OF DEFAULT VALUES SET 
+
+  BY STAGEN 
+ 
+These values can easily be changed by editing and 
+recompiling the program. The meaning of the variables is 
+also described by comments in the code. 
+ 
+
+INTEGER VARIABLES 
+ 
+NMAX   = 9000 Maximum number of time steps. 
+IN_VTAN = 0  Inlet boundary condition for the flow angle. 
+
+  The absolute flow angle is fixed. 
+IN_PRESS = 0  The pressure at the inlet boundary is  
+
+  calculated from the computed density.  
+INPUT      = 2  The blade geometry is input on the hub and 
+
+casing stream surfaces in addition to any 
+other streamwise surfaces. 
+
+IN_VR      = 0  The radial velocity at inlet is obtained by 
+extrapolation from the interior flow field. 
+
+ITIMST    = 3  Using the standard “scree” scheme. 
+IPOUT = 1 Exit boundary uses fixed pressures at the hub 
+
+and casing with a linear variation between. 
+INFLOW = 0 Mass flow rate not specified. 
+ILOS = 10 Simple mixing length turbulence model used. 
+NLOS = 5 Viscous forces updated every 5 steps. 
+IF_RESTART=0 Not starting from a restart file. 
+IOUTST = 1 Writing out a restart file when finished. 
+IBOUND = 0 Viscous shear on all solid surfaces. 
+IR,JR,KR = 3 Cell size of the first multigrid blocks. 
+IRBB,JRBB,KRBB =9 Cell size of the second level multigrid blocks. 
+NSBUP = 1 One superblock upstream of the leading 
+
+edge. 
+NSBON = 2 Three superblocks in the blade row. 
+NSBDN = 1 One superblock downstream of the trailing 
+
+edge. 
+IFMIX = 1  Standard mixing plane treatment. 
+NEWGRID= 0  No generation of a new grid by the solver. 
+
+
+
+29 
+ 
+
+JTRANS, JTRANP =0 Fully turbulent boundary layers on the blades. 
+JTRANH, JTRANT=0  Fully turbulent boundary layers on the 
+
+endwalls. 
+ISHIFT = 2 Grids are automatically adjusted to be 
+
+contiguous at the mixing plane. 
+NCHANGE = 1000 Smoothing and damping factors are 
+
+increased over the first 1000 steps. 
+IF_CUSP = 0 No cusp will be generated. 
+LCUSP  = 4 Length of cusp to be generated. 
+ICUSP     = 0 Any cusp is centred on the blade centre line. 
+LCUSPUP= 0 Cusp starts LCUSPUP points upstream of the 
+
+trailing edge. 
+IFANGLES=0 The upstream and downstream grid angles 
+
+are obtained by extrapolation from the blade 
+centre line. 
+
+NEXTRAP_LE = 10 The upstream grid direction is extrapolated 
+using the first 10 points on the blade. 
+
+NEXTRAP_TE = 10 The downstream grid direction is 
+extrapolated using the last 10 points on the 
+blade. 
+
+IF_DESIGN = 0 The blade shape will not be changed within 
+MULTALL. 
+
+IF_RESTAGGER=0 The blade witll not be restaggered within 
+MULTALL. 
+
+IF_LEAN = 0 The blade will not be leaned within MULTALL. 
+ 
+GAS PROPERTIES 
+  
+CP = 1005. Specific heat capacity is for air at room 
+
+temperatures. 
+GA = 1.4 Specific heat ratio is for air. 
+ 
+FLOATING POINT CONTROL VARIABLES 
+ 
+CFL = 0.4 The time step length is set by CFL and a 
+
+standard safe value is 0.4 . 
+SFT = 0.005 The smoothing in the pitchwise and spanwise 
+
+directions is the standard value, 0.005. 
+
+
+
+30 
+ 
+
+SFX = 0.005 The smoothing in the streamwise 
+(meridional) direction is the standard value, 
+0.005. 
+
+FAC_4TH = 0.8 The proportion of 4th order smoothing is 0.8. 
+MACHLIM = 2 The Mach number limiter is 2.0 . 
+DAMP = 10 The damping factor is 10, a standard value. 
+FBLK1 = 0.4 The changes for the first level of multigrid 
+
+blocks are reduced by 0.4 . 
+FBLK1 = 0.2 The changes for the second level of multigrid 
+
+blocks are reduced by 0.2 . 
+FBLK3 = 0.1 The changes for the superblocks are reduced 
+
+by 0.1. 
+SFEX = 0.0 No exit flow smoothing. 
+CLIM  = 0.001 Convergence limit on the percentage change 
+
+in the average residuals. 
+RFIN = 0.5 Relaxation factor on the changes in inlet flow 
+
+conditions. 
+RFMIX = 0.025 Relaxation factor on the isentropic forcing of 
+
+the flow downstream of the mixing plane. 
+FSMTHB = 1.0 Factor for increasing the smoothing at the 
+
+inlet and exit boundaries and at the mixing 
+plane. 
+
+FEXTRAP = 0.8 Flux extrapolation factor at the mixing plane. 
+Also used to extrapolate the pressure to the 
+exit boundary. 
+
+FANGLE = 0.8 Angle extrapolation factor downstream of  
+the mixing plane. 
+
+ 
+VISCOUS MODEL PARAMETERS 
+ 
+FSTURB = 1.0 The free stream turbulent viscosity is the 
+
+laminar viscosity x FSTURB . 
+TURBVISDAMP= 0.5 The pitchwise average turbulent viscosity is 
+
+halved across a mixing plane. 
+TURBVISLIM = 1000.   The maximum accepted value of turbulent 
+
+viscosity = TURBVISLIM x laminar viscosity . 
+ 
+ 
+ 
+
+
+
+31 
+ 
+
+REYNO = 800000. The Reynolds number of the first blade row 
+based on the axial chord and the exit flow 
+velocity of the first blade row. This is used to 
+set the level of laminar viscosity. 
+
+PRANDTL = 1.0 The Prandtl number of the fluid, about 1.0 
+for air. 
+
+RF_VIS = 0.5 Changes in turbulent viscosity are relaxed by 
+0.5. 
+
+FTRANS = 0.001 Transition occurs whenever the ratio of 
+turbulent to laminar viscosity exceeds this 
+value. 
+
+YPLUSWALL = 0.0 The skin friction is calculated from the 
+specified YPLUSWALL only if YPLUSWALL is 
+greater than 5.0, otherwise use the standard 
+wall functions. 
+
+YPLAM  = 5.0 No turbulent viscosity is allowed for YPLUS 
+less than YPLAM . 
+
+YPTURB = 25.0 Turbulent viscosity is damped between 
+YPLUS = YPLAM  and YPTURB. 
+
+FACMIXUP = 2.0 The turbulent viscosity is increased by this 
+over the first NMIXUP steps. 
+
+NMIXUP = 1000 The number of time steps over which the 
+turbulent viscosity is increased. 
+
+FRACPB = 0.03 The mixing length limit in the blade row if 
+using ILOS = 10. 
+
+FRACPW = 0.03 The mixing length limit downstream of the 
+blades if using ILOS = 10. 
+
+FRACPUP = 0.03 The mixing length limit upstream of the 
+blades if using ILOS = 10. 
+
+FRACPIN = 0.02 The mixing length limit at the inlet boundary 
+if using ILOS = 100. 
+
+FRACPLE = 0.03 The mixing length limit at blade leading edge 
+if using ILOS = 100. 
+
+FRACPTE = 0.03 The mixing length limit at blade trailing edge 
+if using ILOS = 100. 
+
+FRACPDWN= 0.04 The mixing length limit at the downstream 
+boundary or mixing plane if using ILOS = 100. 
+
+FAC_STMIX = 0.0 The S-A model is used without trying to 
+match the mixing length turbulent viscosity. 
+
+
+
+32 
+ 
+
+FAC_ST0 = 1.0 Factor scaling the first source term in the  
+  S-A model. 
+FAC_ST1 = 1.0 Factor scaling the second source term in the  
+  S-A model. 
+FAC_ST2 = 1.0 Factor scaling the third source term in the  
+  S-A model. 
+FAC_ST3 = 1.0 Factor scaling the fourth source term in the  
+  S-A model. 
+FAC_SFVIS = 2.0 The smoothing of the turbulent viscosity 
+
+calculated by the S-A model is multiplied by 
+this factor.

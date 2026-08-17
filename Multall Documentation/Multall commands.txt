@@ -1,0 +1,20 @@
+TO CHANGE DIRECTORY
+cd /cygdrive/C/cygwin64/Multall_codes (Directory Name) 
+
+To run and create meangen file 
+$ gfortran -o2 meangen-17.4.f -o meangen-17.4.x 
+
+To input data/open ‘.x’ file 
+$ ./meangen-17.4.x 
+
+To run and create stagen file 
+$ gfortran -o2 stagen-17.3.f -o stagen-17.3.x 
+--
+To run stagen 
+$ ./stagen-17.3.x < stagen.dat 
+
+To run and create multall file 
+$ gfortran -o2 multall-open-17.5.f -o multall-open-17.5.x 
+
+TO run multall Simulation 
+$ ./multall-open-17.5.x < stage_new.dat | tee multall.out

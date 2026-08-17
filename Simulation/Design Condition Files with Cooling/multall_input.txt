@@ -1,0 +1,1098 @@
+ ************************************************************************************************************************
+ ************************************************************************************************************************
+
+                 WELCOME TO MEANGEN
+
+ THIS IS AN INTERACTIVE PROGRAM FOR THE ONE-DIMENSIONAL
+               DESIGN OF AXIAL TURBOMACHINES.
+
+ ANSWER THE QUESTIONS AS THEY APPEAR ON THE SCREEN
+ AND THE PROGRAM WILL WRITE A DATA SET FOR THE
+ BLADE GEOMETRY PROGRAM "STAGEN" WHICH IN TURN WILL
+ GENERATE A 3D DATASET FOR "MULTALL-OPEN".
+
+ ************************************************************************************************************************
+ ************************************************************************************************************************
+  INPUT FROM SCREEN OR FILE ?
+  ANSWER "S"  or  "F" .
+s
+ ******************************************************
+ ******************************************************
+
+       IS THIS A COMPRESSOR OR A TURBINE ?
+       ANSWER "C"  or  "T" .
+t
+ ******************************************************
+ ******************************************************
+
+  DO YOU WANT TO DESIGN AN AXIAL FLOW MACHINE WITH A CONSTANT RADIUS AT A FIXED SPANWISE POSITION ON EACH STAGE ?
+  AND WITH REPEATING FLOW CONDITIONS.
+  OR A MIXED FLOW MACHINE WITH SIGNIFICANT CHANGES IN RADIUS THROUGH A STAGE ?
+  ANSWER "AXI" or "MIX"
+axi
+
+ THE BLADE ROTATION MUST BE IN THE POSITIVE THETA DIRECTION.
+
+ ALL FLOW ANGLES ARE POSITIVE IF THE ASSOCIATED FLOW VECTOR HAS  A POSITIVE COMPONENT IN THE DIRECTION OF ROTATION.
+ ******************************************************
+ ******************************************************
+
+
+ ******************************************************
+ ******************************************************
+ INPUT THE GAS CONSTANT IN J/KG K, AND GAS SPECIFIC HEAT RATIO.
+ THE DEFAULT VALUES ARE THOSE FOR AIR, RGAS = 287.15, GAMMA=1.4.
+  TYPE "A" TO ACCEPT THESE,  OR TYPE IN NEW VALUES.
+287
+1.333
+
+ ******************************************************
+ ******************************************************
+
+ INPUT THE INLET STAGNATION PRESSURE IN BAR AND INLET TEMPERATURE IN DEG K
+3.4474
+709
+ ******************************************************
+ ******************************************************
+
+  INPUT THE NUMBER OF STAGES IN THE MACHINE.
+2
+  NUMBER OF STAGES =            2
+
+ ******************************************************
+ ******************************************************
+
+  BASE THE DESIGN ON THE HUB, MEAN OR TIP RADIUS ?
+  INPUT  "H" ,  "M"   or  "T"
+h
+
+ ******************************************************
+ ******************************************************
+ ******************************************************
+ ******************************************************
+
+  INLET STAGNATION PRESSURE    =    3.44655299      BAR.
+  INLET STAGNATION TEMPERATURE =    708.956482      K.
+  INLET STAGNATION DENSITY     =    1.69388330     Kg/M3.
+
+ ******************************************************
+ ******************************************************
+ ******************************************************
+ ******************************************************
+
+  INPUT THE ROTATION SPEED IN RPM, IT MUST BE POSITIVE.
+8283
+   RPM =    8283.00000
+ ******************************************************
+ ******************************************************
+
+ ******************************************************
+ ******************************************************
+
+  INPUT THE REQUIRED INLET MASS FLOW RATE IN kg/sec.
+11.6741
+  INLET FLOW =    11.6740999
+
+ ******************************************************
+ ******************************************************
+
+ ************************************************************************************************************************
+ ************************************************************************************************************************
+              STARTING STAGE NUMBER            1
+ ************************************************************************************************************************
+ ************************************************************************************************************************
+
+
+
+ ******************************************************
+ ******************************************************
+
+ YOU MAY SPECIFY THE STAGE VELOCITY TRIANGLES IN ONE OF 3 WAYS
+
+  METHOD "A"-SPECIFY THE REACTION, FLOW COEFFICIENT AND STAGE LOADING COEFFICIENT
+
+  METHOD "B"- SPECIFY THE FLOW COEFFICIENT, THE STATOR EXIT ANGLE AND THE ROTOR EXIT ANGLE
+
+  METHOD "C"- SPECIFY THE FLOW COEFFICIENT, THE ROTOR  INLET ANGLE AND THE ROTOR EXIT ANGLE
+
+  METHOD "D" SPECIFY THE STAGE REACTION,THE FIRST BLADEROW INLET ANGLE AND THE FIRST BLADE ROW EXIT ANGLE
+
+
+                    CHOOSE YOUT INPUT METHOD.
+                TYPE IN  "A",  "B", "C"  or "D"
+d
+
+ ******************************************************
+ ******************************************************
+ INPUT TYPE "D" CHOSEN.
+   THIS IS A TURBINE.
+
+  INPUT THE FIRST BLADE ROW INLET ANGLE, THE FIRST BLADE ROW EXIT ANGLE AND THE STAGE REACTION.
+0
+73.1
+0.337
+   0.00000000       73.0999985       38.9795303      -68.0569763
+  PHI=   0.402871042      LOADING =    1.32599998
+
+  YOU MAY SET THE DESIGN RADIUS IN ONE OF 2 WAYS
+
+  METHOD "A".  INPUT THE DESIGN RADIUS DIRECTLY.
+  METHOD "B".  INPUT STAGE ENTHALPY CHANGE.
+
+  CHOOSE METHOD "A" OR "B".
+  TYPE IN "A" or "B".
+
+a
+  RADTYPE = A
+  INPUT THE DESIGN RADIUS IN METRES.
+0.323
+  DESIGN POINT RADIUS =  0.323000014
+ ******************************************************
+ ******************************************************
+
+  STAGE NUMBER.            1
+  INPUT THE FIRST AND SECOND BLADE ROW AXIAL CHORDS IN  METRES
+  THE CURRENT VALUES ARE    5.00000007E-02   3.99999991E-02
+  Press  A  to accept these, or type in new values.
+0.034
+0.029
+  STATOR AND ROTOR AXIAL CHORDS ARE    3.40000018E-02   2.89999992E-02
+
+ ******************************************************
+ ******************************************************
+  INPUT THE INTER ROW GAP AND INTER STAGE GAP AS FRACTIONS OF THE FIRST ROW AXIAL CHORD
+  THE CURRENT VALUES ARE   0.250000000      0.500000000
+  Press  A  to accept these, or type in new values.
+0.362
+0.855
+  ROWGAP =  0.361999989     STAGEGAP =   0.855000019
+
+ ******************************************************
+ ******************************************************
+
+  MEAN LINE COORDINATES, STAGE NUMBER           1
+  XMEAN      -3.40000018E-02  -1.70000009E-02   0.00000000       3.40000018E-02   4.01540026E-02   4.63080034E-02   7.53080025E-02   8.77055004E-02  0.100103006
+  RMEAN      0.323000014      0.323000014      0.323000014      0.323000014      0.323000014      0.323000014      0.323000014      0.323000014      0.323000014
+  VMRAT       1.00000000       1.00000000       1.00000000       1.00000000       1.00000000       1.00000000       1.00000000       1.00000000       1.00000000
+
+ NLE1,NTE1,NLE2,NTE2           3           4           6           7
+
+ INPUT THE BLOCKAGE FACTOR AT THE LEADING EDGES OF THE FIRST BLADE ROW AND AT THE TRAILING EDGE OF THE
+ SECOND BLADE ROW.
+ THIS IS THE SUM OF THE DISPLACEMENT THICKNESSES OF THE HUB AND CASING BOUNDARY LAYERS DIVIDED BY THE BLADE SPAN.
+ THE CURRENT VALUES ARE    0.00000000       0.00000000
+ Press  "A"  to accept these, or type in new values.
+a
+  FBLOCK_LE =    0.00000000      FBLOCK_TE =    0.00000000
+
+ ******************************************************
+ ******************************************************
+
+  BLOCKAGE FACTOR THROUGH THE STAGE
+   0.00000000       0.00000000       0.00000000       0.00000000       0.00000000       0.00000000       0.00000000       0.00000000       0.00000000
+
+ STREAM SURFACE COORDINATES AND SLOPE BEFORE SMOOTHING
+       XMEAN       RMEAN       SDIST   PITCH ANGLE
+     -0.0340      0.3230      0.0000      0.0000
+     -0.0170      0.3230      0.0170      0.0000
+      0.0000      0.3230      0.0340      0.0000
+      0.0340      0.3230      0.0680      0.0000
+      0.0402      0.3230      0.0742      0.0000
+      0.0463      0.3230      0.0803      0.0000
+      0.0753      0.3230      0.1093      0.0000
+      0.0877      0.3230      0.1217      0.0000
+      0.1001      0.3230      0.1341      0.0000
+
+
+  STREAM SURFACE COORDINATES AND SLOPE AFTER SMOOTHING
+       XMEAN       RMEAN       SDIST   PITCH ANGLE
+     -0.0340      0.3230      0.0000      0.0000
+     -0.0170      0.3230      0.0170      0.0000
+      0.0000      0.3230      0.0340      0.0000
+      0.0340      0.3230      0.0680      0.0000
+      0.0402      0.3230      0.0742      0.0000
+      0.0463      0.3230      0.0803      0.0000
+      0.0753      0.3230      0.1093      0.0000
+      0.0877      0.3230      0.1217      0.0000
+      0.1001      0.3230      0.1341      0.0000
+
+  NS     U_LOCAL     VM_LOCAL    PHI_LOCAL
+    1      0.0000    112.8716      0.4029
+    2      0.0000    112.8716      0.4029
+    3      0.0000    112.8716      0.4029
+    4      0.0000    112.8716      0.4029
+    5      0.0000    112.8716      0.4029
+    6    280.1679    112.8716      0.4029
+    7    280.1679    112.8716      0.4029
+    8      0.0000    112.8716      0.4029
+    9      0.0000    112.8716      0.4029
+
+  SETTING TANGENTIAL VELS, STAGE           1
+  STAGE INLET STAGNATION ENTHALPY =    814543.188
+  STAGE INLET ENTROPY             =    0.00000000
+  STAGE INLET PRESSURE            =    3.44655299      BAR.
+  STAGE INLET TEMPERATURE         =    708.956482      K.
+  STAGE INLET DENSITY             =    1.69388330      Kg/M3.
+
+  ROTATIONAL SPEED =    8283.00000
+  BLADE SPEED      =    280.167938      Metres/sec.
+  DESIGN RADIUS    =   0.323000014      Metres.
+  STAGE STAGNATION ENTHALPY CHANGE   =   -104.083138      KJ/Kg.
+
+
+  STARTING INPUT FOR STAGE NUMBER            1
+
+
+ ******************************************************
+ ******************************************************
+
+  STAGE NUMBER.            1
+  INPUT A GUESS OF THE STAGE EFFICIENCY
+  THE CURRENT VALUE IS   0.899999976
+  Press  A  to accept this, or type in a new value.
+0.884
+  THE GUESSED STAGE EFFICIENCY IS   0.884000003
+ ******************************************************
+ ******************************************************
+ ******************************************************
+ ******************************************************
+
+  INPUT A GUESS OF THE DEVIATION ANGLES FOR THE FIRST
+  AND SECOND BLADE ROWS
+  THIS IS THE DIFFERENCE BETWEEN THE FLOW ANGLE AND
+  THE METAL ANGLE AT THE TRAILING EDGE
+  THE DEVIATION ANGLES INPUT SHOULD ALWAYS BE POSITIVE
+  THE CURRENT VALUES ARE   5.00000000       5.00000000     DEGREES
+  Press  A  to accept these, or type in new values
+a
+  THE DEVIATION ANGLES ARE    5.00000000       5.00000000
+
+ ******************************************************
+ ******************************************************
+
+ ******************************************************
+ ******************************************************
+
+  INPUT THE REQUIRED INCIDENCE ANGLES FOR THE FIRST
+  AND SECOND BLADE ROWS
+  THIS IS THE DIFFERENCE BETWEEN THE FLOW ANGLE AND
+  THE METAL ANGLE AT THE LEADING EDGE
+  IT CAN BE EITHER POSITIVE OR NEGATIVE
+  THE CURRENT VALUES ARE  -2.00000000      -2.00000000     DEGREES
+  Press  A  to accept these, or type in new values
+a
+  THE INCIDENCE ANGLES ARE   -2.00000000      -2.00000000
+
+ ******************************************************
+ ******************************************************
+
+
+  INPUT "FRAC_TWIST", THE FRACTION OF FREE-VORTEX TWIST  THAT YOU WANT TO USE ON THIS STAGE.
+  FRAC_TWIST = 1.0  GIVES FULL FREE-VORTEX TWIST.
+  FRAC_TWIST = 0.0  GIVES NO TWIST, SO THE BLADE ANGLES ARE THE SAME AT ALL SPANWISE POSITIONS.
+ VALUES OF FRAC_TWIST GREATER THAN 1.0 OR LESS THAN 0.0 CAN ALSO BE USED.
+  THE CURRENT VALUE IS    1.00000000
+  Press  A  to accept this, or type in a new value.
+0.31
+  DO YOU WISH TO ROTATE THE SECTIONS GENERATED BY ANGLES TO BE INPUT LATER ?
+  THE ROTATION CAN BE DIFFERENT FOR EACH BLADE SECTION
+  INPUT  Y  or N
+y
+
+ ******************************************************
+ ******************************************************
+
+
+  INPUT THE QO LINE ANGLES, MEASURED FROM THE AXIAL DIRECTION AT THE LE AND TE OF THE FIRST BLADE ROW .
+  THE CURRENT VALUES ARE   92.0000000       88.0000000
+  Press  A  to accept these, or type in new values.
+a
+  QLE_ROW1, QTE_ROW1 =   92.0000000       88.0000000
+
+ ******************************************************
+ ******************************************************
+
+
+ ******************************************************
+ ******************************************************
+
+
+  INPUT THE QO LINE ANGLES, MEASURED FROM THE AXIAL DIRECTION AT THE LE AND TE OF THE SECOND BLADE ROW .
+  THE CURRENT VALUES ARE   88.0000000       92.0000000
+  Press  A  to accept these, or type in new values.
+a
+  QLE_ROW2, QTE_ROW2 =   88.0000000       92.0000000
+
+ ******************************************************
+ ******************************************************
+
+  LOCAL FLOW PROPERTIES THROUGH THE STAGE
+        VM          P           T           RHO          HO          S
+    112.8716      3.3407    703.4554      1.6547 814543.1875      0.0000
+    112.8716      3.3407    703.4554      1.6547 814543.1875      0.0000
+    112.8716      3.3407    703.4554      1.6547 814543.1875      0.0000
+    112.8716      2.2489    643.3898      1.2179 814543.1875     11.0429
+    112.8716      2.2489    643.3898      1.2179 814543.1875     11.0429
+    112.8716      2.2489    643.3898      1.2179 814543.1875     11.0429
+    112.8716      1.7813    612.8586      1.0127 710460.0625     22.0859
+    112.8716      1.7813    612.8586      1.0127 710460.0625     22.0859
+    112.8716      1.7813    612.8586      1.0127 710460.0625     22.0859
+ ******************************************************
+ ******************************************************
+
+   STAGE NUMBER            1
+
+   MASS FLOW RATE                        =    11.6740999
+   ROTATIONAL SPEED, RPM                 =    8283.00000
+   THE FLOW COEFFICIENT, Vx/U            =   0.402871072
+   THE STAGE LOADING COEFFICIENT DH/U**2 =    1.32599998
+   THE STAGE REACTION BASED ON ENTHALPY  =   0.337000281
+   THE AXIAL VELOCITY    =                    112.871559
+   DESIGN POINT ROTATIONAL SPEED  =           280.167938
+   DESIGN POINT  RADIUS           =          0.323000014
+   STAGE ISENTROPIC ENTHALPY CHANGE   =      -117.741112
+   STAGE ACTUAL ENTHALPY CHANGE     =         -104.083138
+
+ ******************************************************
+       XHUB        XTIP        RHUB        RTIP         QLEN      PITCH       QANGL       DENSITY
+     -0.0340     -0.0340      0.3230      0.3525      0.0308      0.0000     90.0000      1.6547
+     -0.0170     -0.0175      0.3230      0.3525      0.0308      0.0000     91.0000      1.6547
+      0.0000     -0.0010      0.3230      0.3525      0.0308      0.0000     92.0000      1.6547
+      0.0340      0.0353      0.3230      0.3613      0.0406      0.0000     88.0000      1.2179
+      0.0402      0.0415      0.3230      0.3613      0.0406      0.0000     88.0000      1.2179
+      0.0463      0.0476      0.3230      0.3613      0.0406      0.0000     88.0000      1.2179
+      0.0753      0.0737      0.3230      0.3699      0.0504      0.0000     92.0000      1.0127
+      0.0877      0.0869      0.3230      0.3699      0.0503      0.0000     91.0000      1.0127
+      0.1001      0.1001      0.3230      0.3699      0.0503      0.0000     90.0000      1.0127
+
+   PITCH TO AXIAL CHORD RATIOS BASED ON THE ZWEIFEL COEFFICIENT
+   MODIFIED TO ALLOW FOR RADIUS AND STREAM SURFACE  THICKNESS CHANGES.
+   PCX1Z, PCX2Z    1.69149458       1.08819914
+
+
+  PITCH TO AXIAL CHORD RATIOS USED.
+  PCX1, PCX2, PITCH1, PITCH2, NROW1, NROW2    1.69149458       1.08819914       5.75108193E-02   3.15577723E-02          35          64
+
+ STAGE No, ROW No, No. BLADES           1           1          35
+ STAGE No, ROW No, No. BLADES           1           2          64
+
+ ******************************************************
+  CONDITIONS FOR THE FIRST BLADE ROW OF THE STAGE.
+  THIS IS A TURBINE STATOR
+ ******************************************************
+ FIRST BLADE INLET AND EXIT ANGLES    0.00000000       73.0999985
+  FIRST BLADE AXIAL VELOCITY        112.871559
+  FIRST BLADE INLET MACH NUMBER    0.217575610
+  FIRST BLADE EXIT MACH NUMBER     0.782603264
+  FIRST BLADE EXIT DENSITY          1.21789598
+  FIRST BLADE EXIT PRESSURE         2.24887991
+  FIRST BLADE INLET STAGN PRESS     3.44740081
+  FIRST BLADE EXIT STAGN PRESS      3.31727409
+  FIRST BLADE REL INLET STAG PRES   3.44740081
+  FIRST BLADE EXIT TEMPERATURE      643.389771
+  FIRST BLADE EXIT STAGN TEMP       709.000000
+  FIRST BLADE TIP RADIUS =         0.352455646
+  FIRST BLADE INLET SPAN =          3.38922068E-02
+  FIRST BLADE AXIAL CHORD=          3.40000018E-02
+  FIRST BLADE ASPECT RATIO =       0.996829569
+
+ ******************************************************
+  CONDITIONS FOR THE SECOND BLADE ROW OF THE STAGE.
+  THIS IS A TURBINE ROTOR
+ ******************************************************
+  SECOND BLADE INLET AND EXIT ANGLES    38.9795303      -68.0569763
+  SECOND BLADE AXIAL VELOCITY       112.871559
+  SECOND BLADE INLET MACH NUMBER   0.292659789
+  SECOND BLADE EXIT MACH NUMBER    0.623795629
+  SECOND BLADE DENSITY              1.01273286
+  SECOND BLADE EXIT PRESSURE        1.78130019
+  SECOND BLADE INLET STAGN PRES.    3.31727409
+  SECOND BLADE REL INLET STAG PR.   2.38003325
+  SECOND BLADE ROW EXIT STAG PRES   1.84669304
+  SECOND BLADE TEMPERATURE          612.858643
+  SECOND BLADE STAGN EXIT TEMP.     618.403259
+  SECOND BLADE TIP RADIUS =        0.369915307
+  SECOND BLADE EXIT SPAN =          4.26273569E-02
+  SECOND BLADE AXIAL CHORD =        2.89999992E-02
+  SECOND BLADE ASPECT RATIO=        1.46990895
+ ******************************************************
+ ******************************************************
+
+  THE RADII THROUGH THE STAGE ARE -
+ROW 1 HUB RADIUS   0.3230  ROW 1 TIP RADIUS   0.3525  ROW 2 HUB RADIUS   0.3230  ROW 2 TIP RADIUS   0.3613
+
+ ******************************************************
+ ******************************************************
+
+ DO YOU WANT TO CHANGE THE ANGLES FOR THIS STAGE ? ANSWER  "Y" OR "N"
+n
+ n
+  CHANGE ANGLES ANSWER WAS n
+ ******************************************************
+ ******************************************************
+
+
+ ************************************************************************************************************************
+ ************************************************************************************************************************
+              STARTING STAGE NUMBER            2
+ ************************************************************************************************************************
+ ************************************************************************************************************************
+
+ ******************************************************
+ ******************************************************
+
+   ARE THE ANGLES, MASS FLOW, DESIGN RADIUS,
+   EFFICIENCY, ETC, FOR THIS STAGE  "ALL" THE SAME AS
+   FOR THE LAST STAGE ?
+
+   ANSWER  "Y" or  "N", OR ANSWER  "C"  TO CHANGE FROM
+   "FLO_TYP" = "AXI" TO "FLO_TYP" = "MIX".
+n
+  IFSAME_ALL= n
+
+
+ ******************************************************
+ ******************************************************
+
+ YOU MAY SPECIFY THE STAGE VELOCITY TRIANGLES IN ONE OF 3 WAYS
+
+  METHOD "A"-SPECIFY THE REACTION, FLOW COEFFICIENT AND STAGE LOADING COEFFICIENT
+
+  METHOD "B"- SPECIFY THE FLOW COEFFICIENT, THE STATOR EXIT ANGLE AND THE ROTOR EXIT ANGLE
+
+  METHOD "C"- SPECIFY THE FLOW COEFFICIENT, THE ROTOR  INLET ANGLE AND THE ROTOR EXIT ANGLE
+
+  METHOD "D" SPECIFY THE STAGE REACTION,THE FIRST BLADEROW INLET ANGLE AND THE FIRST BLADE ROW EXIT ANGLE
+
+
+                    CHOOSE YOUT INPUT METHOD.
+                TYPE IN  "A",  "B", "C"  or "D"
+d
+
+ ******************************************************
+ ******************************************************
+ INPUT TYPE "D" CHOSEN.
+   THIS IS A TURBINE.
+
+  INPUT THE FIRST BLADE ROW INLET ANGLE, THE FIRST BLADE ROW EXIT ANGLE AND THE STAGE REACTION.
+11.5
+69
+0.334
+   11.5000010       69.0000076       26.4077740      -62.3042297
+  PHI=   0.474268734      LOADING =    1.13901806
+
+  YOU MAY SET THE DESIGN RADIUS IN ONE OF 2 WAYS
+
+  METHOD "A".  INPUT THE DESIGN RADIUS DIRECTLY.
+  METHOD "B".  INPUT STAGE ENTHALPY CHANGE.
+
+  CHOOSE METHOD "A" OR "B".
+  TYPE IN "A" or "B".
+
+a
+  RADTYPE = A
+  INPUT THE DESIGN RADIUS IN METRES.
+0.311
+  DESIGN POINT RADIUS =  0.310999990
+ ******************************************************
+ ******************************************************
+
+  STAGE NUMBER.            2
+  INPUT THE FIRST AND SECOND BLADE ROW AXIAL CHORDS IN  METRES
+  THE CURRENT VALUES ARE    3.40000018E-02   2.89999992E-02
+  Press  A  to accept these, or type in new values.
+0.045
+0.034
+  STATOR AND ROTOR AXIAL CHORDS ARE    4.50000018E-02   3.40000018E-02
+
+ ******************************************************
+ ******************************************************
+  INPUT THE INTER ROW GAP AND INTER STAGE GAP AS FRACTIONS OF THE FIRST ROW AXIAL CHORD
+  THE CURRENT VALUES ARE   0.361999989      0.855000019
+  Press  A  to accept these, or type in new values.
+0.294
+0.641
+  ROWGAP =  0.294000000     STAGEGAP =   0.640999973
+
+ ******************************************************
+ ******************************************************
+
+  MEAN LINE COORDINATES, STAGE NUMBER           2
+  XMEAN       8.49133879E-02   9.45476145E-02  0.104153000      0.138153002      0.143151000      0.148148999      0.182148993      0.199148998      0.216149002
+  RMEAN      0.310999990      0.310999990      0.310999990      0.310999990      0.310999990      0.310999990      0.310999990      0.310999990      0.310999990
+  VMRAT       1.00000000       1.00000000       1.00000000       1.00000000       1.00000000       1.00000000       1.00000000       1.00000000       1.00000000
+
+ NLE1,NTE1,NLE2,NTE2           3           4           6           7
+
+ INPUT THE BLOCKAGE FACTOR AT THE LEADING EDGES OF THE FIRST BLADE ROW AND AT THE TRAILING EDGE OF THE
+ SECOND BLADE ROW.
+ THIS IS THE SUM OF THE DISPLACEMENT THICKNESSES OF THE HUB AND CASING BOUNDARY LAYERS DIVIDED BY THE BLADE SPAN.
+ THE CURRENT VALUES ARE    0.00000000       0.00000000
+ Press  "A"  to accept these, or type in new values.
+a
+  FBLOCK_LE =    0.00000000      FBLOCK_TE =    0.00000000
+
+ ******************************************************
+ ******************************************************
+
+  BLOCKAGE FACTOR THROUGH THE STAGE
+   0.00000000       0.00000000       0.00000000       0.00000000       0.00000000       0.00000000       0.00000000       0.00000000       0.00000000
+
+ STREAM SURFACE COORDINATES AND SLOPE BEFORE SMOOTHING
+       XMEAN       RMEAN       SDIST   PITCH ANGLE
+      0.0849      0.3110      0.0000      0.0000
+      0.0945      0.3110      0.0096      0.0000
+      0.1042      0.3110      0.0192      0.0000
+      0.1382      0.3110      0.0532      0.0000
+      0.1432      0.3110      0.0582      0.0000
+      0.1481      0.3110      0.0632      0.0000
+      0.1821      0.3110      0.0972      0.0000
+      0.1991      0.3110      0.1142      0.0000
+      0.2161      0.3110      0.1312      0.0000
+
+
+  STREAM SURFACE COORDINATES AND SLOPE AFTER SMOOTHING
+       XMEAN       RMEAN       SDIST   PITCH ANGLE
+      0.0849      0.3110      0.0000      0.0000
+      0.0945      0.3110      0.0096      0.0000
+      0.1042      0.3110      0.0192      0.0000
+      0.1382      0.3110      0.0532      0.0000
+      0.1432      0.3110      0.0582      0.0000
+      0.1481      0.3110      0.0632      0.0000
+      0.1821      0.3110      0.0972      0.0000
+      0.1991      0.3110      0.1142      0.0000
+      0.2161      0.3110      0.1312      0.0000
+
+  NS     U_LOCAL     VM_LOCAL    PHI_LOCAL
+    1      0.0000    112.8716      0.4184
+    2      0.0000    112.8716      0.4184
+    3      0.0000    112.8716      0.4184
+    4      0.0000    112.8716      0.4184
+    5      0.0000    112.8716      0.4184
+    6    269.7592    112.8716      0.4184
+    7    269.7592    112.8716      0.4184
+    8      0.0000    112.8716      0.4184
+    9      0.0000    112.8716      0.4184
+
+  SETTING TANGENTIAL VELS, STAGE           2
+  STAGE INLET STAGNATION ENTHALPY =    710460.062
+  STAGE INLET ENTROPY             =    22.0858612
+  STAGE INLET PRESSURE            =    1.84617317      BAR.
+  STAGE INLET TEMPERATURE         =    618.359741      K.
+  STAGE INLET DENSITY             =    1.04027772      Kg/M3.
+
+  ROTATIONAL SPEED =    8283.00000
+  BLADE SPEED      =    269.759216      Metres/sec.
+  DESIGN RADIUS    =   0.310999990      Metres.
+  STAGE STAGNATION ENTHALPY CHANGE   =   -82.8863831      KJ/Kg.
+
+
+  STARTING INPUT FOR STAGE NUMBER            2
+
+
+ ******************************************************
+ ******************************************************
+
+  STAGE NUMBER.            2
+  INPUT A GUESS OF THE STAGE EFFICIENCY
+  THE CURRENT VALUE IS   0.884000003
+  Press  A  to accept this, or type in a new value.
+a
+  THE GUESSED STAGE EFFICIENCY IS   0.884000003
+ ******************************************************
+ ******************************************************
+ ******************************************************
+ ******************************************************
+
+  INPUT A GUESS OF THE DEVIATION ANGLES FOR THE FIRST
+  AND SECOND BLADE ROWS
+  THIS IS THE DIFFERENCE BETWEEN THE FLOW ANGLE AND
+  THE METAL ANGLE AT THE TRAILING EDGE
+  THE DEVIATION ANGLES INPUT SHOULD ALWAYS BE POSITIVE
+  THE CURRENT VALUES ARE   5.00000000       5.00000000     DEGREES
+  Press  A  to accept these, or type in new values
+a
+  THE DEVIATION ANGLES ARE    5.00000000       5.00000000
+
+ ******************************************************
+ ******************************************************
+
+ ******************************************************
+ ******************************************************
+
+  INPUT THE REQUIRED INCIDENCE ANGLES FOR THE FIRST
+  AND SECOND BLADE ROWS
+  THIS IS THE DIFFERENCE BETWEEN THE FLOW ANGLE AND
+  THE METAL ANGLE AT THE LEADING EDGE
+  IT CAN BE EITHER POSITIVE OR NEGATIVE
+  THE CURRENT VALUES ARE  -2.00000000      -2.00000000     DEGREES
+  Press  A  to accept these, or type in new values
+a
+  THE INCIDENCE ANGLES ARE   -2.00000000      -2.00000000
+
+ ******************************************************
+ ******************************************************
+
+
+  INPUT "FRAC_TWIST", THE FRACTION OF FREE-VORTEX TWIST  THAT YOU WANT TO USE ON THIS STAGE.
+  FRAC_TWIST = 1.0  GIVES FULL FREE-VORTEX TWIST.
+  FRAC_TWIST = 0.0  GIVES NO TWIST, SO THE BLADE ANGLES ARE THE SAME AT ALL SPANWISE POSITIONS.
+ VALUES OF FRAC_TWIST GREATER THAN 1.0 OR LESS THAN 0.0 CAN ALSO BE USED.
+  THE CURRENT VALUE IS   0.310000002
+  Press  A  to accept this, or type in a new value.
+1
+  DO YOU WISH TO ROTATE THE SECTIONS GENERATED BY ANGLES TO BE INPUT LATER ?
+  THE ROTATION CAN BE DIFFERENT FOR EACH BLADE SECTION
+  INPUT  Y  or N
+y
+
+ ******************************************************
+ ******************************************************
+
+
+  INPUT THE QO LINE ANGLES, MEASURED FROM THE AXIAL DIRECTION AT THE LE AND TE OF THE FIRST BLADE ROW .
+  THE CURRENT VALUES ARE   92.0000000       88.0000000
+  Press  A  to accept these, or type in new values.
+a
+  QLE_ROW1, QTE_ROW1 =   92.0000000       88.0000000
+
+ ******************************************************
+ ******************************************************
+
+
+ ******************************************************
+ ******************************************************
+
+
+  INPUT THE QO LINE ANGLES, MEASURED FROM THE AXIAL DIRECTION AT THE LE AND TE OF THE SECOND BLADE ROW .
+  THE CURRENT VALUES ARE   88.0000000       92.0000000
+  Press  A  to accept these, or type in new values.
+a
+  QLE_ROW2, QTE_ROW2 =   88.0000000       92.0000000
+
+ ******************************************************
+ ******************************************************
+
+  LOCAL FLOW PROPERTIES THROUGH THE STAGE
+        VM          P           T           RHO          HO          S
+    112.8716      1.7786    612.6292      1.0116 710460.0625     22.0859
+    112.8716      1.7786    612.6292      1.0116 710460.0625     22.0859
+    112.8716      1.7786    612.6292      1.0116 710460.0625     22.0859
+    112.8716      1.3351    575.2304      0.8087 710460.0625     32.0413
+    112.8716      1.3351    575.2304      0.8087 710460.0625     32.0413
+    112.8716      1.2572    566.6603      0.7731 710460.0625     32.0413
+    112.8716      1.0613    547.9048      0.6749 637334.8750     41.9968
+    112.8716      0.9969    539.4084      0.6440 627573.6875     41.9968
+    112.8716      0.9969    539.4084      0.6440 627573.6875     41.9968
+ ******************************************************
+ ******************************************************
+
+   STAGE NUMBER            2
+
+   MASS FLOW RATE                        =    11.6740999
+   ROTATIONAL SPEED, RPM                 =    8283.00000
+   THE FLOW COEFFICIENT, Vx/U            =   0.418415964
+   THE STAGE LOADING COEFFICIENT DH/U**2 =    1.13901806
+   THE STAGE REACTION BASED ON ENTHALPY  =   0.289775133
+   THE AXIAL VELOCITY    =                    112.871559
+   DESIGN POINT ROTATIONAL SPEED  =           269.759216
+   DESIGN POINT  RADIUS           =          0.310999990
+   STAGE ISENTROPIC ENTHALPY CHANGE   =      -93.7628784
+   STAGE ACTUAL ENTHALPY CHANGE     =         -82.8863831
+
+ ******************************************************
+       XHUB        XTIP        RHUB        RTIP         QLEN      PITCH       QANGL       DENSITY
+      0.0849      0.0849      0.3110      0.3595      0.0523      0.0000     90.0000      1.0116
+      0.0945      0.0937      0.3110      0.3595      0.0523      0.0000     91.0015      1.0116
+      0.1042      0.1025      0.3110      0.3595      0.0523      0.0000     92.0000      1.0116
+      0.1382      0.1402      0.3110      0.3689      0.0633      0.0000     88.0000      0.8087
+      0.1432      0.1452      0.3110      0.3689      0.0633      0.0000     88.0000      0.8087
+      0.1481      0.1502      0.3110      0.3708      0.0656      0.0000     88.0000      0.7731
+      0.1821      0.1797      0.3110      0.3814      0.0784      0.0000     92.0000      0.6749
+      0.1991      0.1979      0.3110      0.3844      0.0821      0.0000     91.0000      0.6440
+      0.2161      0.2161      0.3110      0.3844      0.0821      0.0000     90.0000      0.6440
+
+   PITCH TO AXIAL CHORD RATIOS BASED ON THE ZWEIFEL COEFFICIENT
+   MODIFIED TO ALLOW FOR RADIUS AND STREAM SURFACE  THICKNESS CHANGES.
+   PCX1Z, PCX2Z    1.56152785      0.991751850
+
+
+  PITCH TO AXIAL CHORD RATIOS USED.
+  PCX1, PCX2, PITCH1, PITCH2, NROW1, NROW2    1.56152785      0.991751850       5.30919507E-02   3.37195583E-02          36          57
+
+ STAGE No, ROW No, No. BLADES           2           3          36
+ STAGE No, ROW No, No. BLADES           2           4          57
+
+ ******************************************************
+  CONDITIONS FOR THE FIRST BLADE ROW OF THE STAGE.
+  THIS IS A TURBINE STATOR
+ ******************************************************
+ FIRST BLADE INLET AND EXIT ANGLES    11.5000010       69.0000076
+  FIRST BLADE AXIAL VELOCITY        112.871559
+  FIRST BLADE INLET MACH NUMBER    0.237923279
+  FIRST BLADE EXIT MACH NUMBER     0.671393991
+  FIRST BLADE EXIT DENSITY         0.808708429
+  FIRST BLADE EXIT PRESSURE         1.33510590
+  FIRST BLADE INLET STAGN PRESS     1.84669292
+  FIRST BLADE EXIT STAGN PRESS      1.78373337
+  FIRST BLADE REL INLET STAG PRES   1.84669292
+  FIRST BLADE EXIT TEMPERATURE      575.230408
+  FIRST BLADE EXIT STAGN TEMP       618.403259
+  FIRST BLADE TIP RADIUS =         0.359528333
+  FIRST BLADE INLET SPAN =          5.32553941E-02
+  FIRST BLADE AXIAL CHORD=          3.40000018E-02
+  FIRST BLADE ASPECT RATIO =        1.56633508
+
+ ******************************************************
+  CONDITIONS FOR THE SECOND BLADE ROW OF THE STAGE.
+  THIS IS A TURBINE ROTOR
+ ******************************************************
+  SECOND BLADE INLET AND EXIT ANGLES    26.4077740      -62.3042297
+  SECOND BLADE AXIAL VELOCITY       112.871559
+  SECOND BLADE INLET MACH NUMBER   0.270662457
+  SECOND BLADE EXIT MACH NUMBER    0.530433476
+  SECOND BLADE DENSITY             0.643977821
+  SECOND BLADE EXIT PRESSURE       0.996943474
+  SECOND BLADE INLET STAGN PRES.    1.78373325
+  SECOND BLADE REL INLET STAG PR.   1.31976604
+  SECOND BLADE ROW EXIT STAG PRES   1.11541259
+  SECOND BLADE TEMPERATURE          539.408447
+  SECOND BLADE STAGN EXIT TEMP.     546.256775
+  SECOND BLADE TIP RADIUS =        0.381353199
+  SECOND BLADE EXIT SPAN =          6.51409775E-02
+  SECOND BLADE AXIAL CHORD =        3.39999944E-02
+  SECOND BLADE ASPECT RATIO=        1.91591144
+ ******************************************************
+ ******************************************************
+
+  THE RADII THROUGH THE STAGE ARE -
+ROW 1 HUB RADIUS   0.3110  ROW 1 TIP RADIUS   0.3595  ROW 2 HUB RADIUS   0.3110  ROW 2 TIP RADIUS   0.3708
+
+ ******************************************************
+ ******************************************************
+
+ DO YOU WANT TO CHANGE THE ANGLES FOR THIS STAGE ? ANSWER  "Y" OR "N"
+n
+ n
+  CHANGE ANGLES ANSWER WAS n
+ ******************************************************
+ ******************************************************
+
+  STAGE No            1 NALL =           7
+  NLE1,NTE1,NLE2,NTE2           3           4           6           7
+
+  COORDINATES OF THE CONTINUOUS STREAM SURFACE BEFORE   SMOOTHING, NINTPTS =           16
+  XSURFHUB
+  -0.03400  -0.01700   0.00000   0.03400   0.04015   0.04631   0.07531   0.08491
+   0.09455   0.10415   0.13815   0.14315   0.14815   0.18215   0.19915   0.21615
+  XSURFTIP
+  -0.03400  -0.01751  -0.00103   0.03534   0.04149   0.04765   0.07367   0.08491
+   0.09370   0.10246   0.14018   0.14517   0.15024   0.17969   0.19787   0.21615
+  RSURFHUB
+   0.32300   0.32300   0.32300   0.32300   0.32300   0.32300   0.32300   0.31100
+   0.31100   0.31100   0.31100   0.31100   0.31100   0.31100   0.31100   0.31100
+  RSURFTIP
+   0.35246   0.35246   0.35246   0.36129   0.36129   0.36129   0.36992   0.35953
+   0.35953   0.35953   0.36892   0.36892   0.37085   0.38135   0.38440   0.38440
+
+
+   LEADING AND TRAILING EDGE POINTS ON THE CONTINUOUS  STREAM SURFACE, STAGE No            1
+           3           4           6           7
+
+   LEADING AND TRAILING EDGE POINTS ON THE CONTINUOUS  STREAM SURFACE, STAGE No            2
+          10          11          13          14
+
+  COORDINATES OF THE CONTINUOUS STREAM SURFACE AFTER    SMOOTHING, NINTPTS =           16
+  XSURFHUB
+  -0.03400  -0.01700   0.00000   0.03400   0.04015   0.04630   0.07440   0.08580
+   0.09456   0.10415   0.13815   0.14315   0.14815   0.18215   0.19915   0.21615
+  XSURFTIP
+  -0.03400  -0.01752  -0.00120   0.03543   0.04149   0.04753   0.07352   0.08548
+   0.09370   0.10232   0.14025   0.14510   0.15024   0.17994   0.19793   0.21615
+  RSURFHUB
+   0.32300   0.32300   0.32300   0.32300   0.32299   0.32289   0.31986   0.31262
+   0.31117   0.31101   0.31100   0.31100   0.31100   0.31100   0.31100   0.31100
+  RSURFTIP
+   0.35246   0.35256   0.35353   0.36082   0.36130   0.36179   0.36611   0.36081
+   0.35973   0.36023   0.36857   0.36925   0.37084   0.38047   0.38370   0.38440
+
+ DO YOU WANT TO OUTPUT ALL BLADE ROWS TO THE FILE "stagen.dat"?
+   ANSWER  "Y"   or  "N" .
+y
+  ANSOUT = Y
+
+  STAGE No            1 STATOR  ROW NUMBER           1 SECTION No           1
+  INCIDENCE ANGLE =   -2.00000000
+  DEVIATION ANGLE =    5.00000000
+  BLADE INLET METAL ANGLE =   -2.00000000
+  BLADE EXIT METAL ANGLE  =    78.1000061
+
+ *********************************************************************************************
+ *********************************************************************************************
+ STAGE NUMBER           1  ROW NUMBER           1  THIS IS A STATOR
+ *********************************************************************************************
+ *********************************************************************************************
+
+  THE CURRENT VALUES WERE OF BLADE THICKNESS AND POINT OF MAXIMUM THICKNESS ARE:
+ SECTION No.    1  MAX THICKNESS, POSITION OF MAX THICKNESS      0.3000      0.4500
+ SECTION No.    2  MAX THICKNESS, POSITION OF MAX THICKNESS      0.3000      0.4500
+ SECTION No.    3  MAX THICKNESS, POSITION OF MAX THICKNESS      0.3000      0.4500
+
+ DO YOU WANT TO ACCEPT THESE ? ANSWER "Y"  or  "N".
+n
+ ANSTK = N
+ ******************************************************
+  STAGE NUMBER           1  SECTION NUMBER            1
+  INPUT NEW VALUES OF "TKMAX" AND "XTKMAX" FOR A STATOR
+  THE CURRENT VALUES ARE-   0.300000012      0.449999988
+  PRESS "A" TO ACCEPT THESE OR TYPE IN NEW VALUES.
+
+
+
+0.2217,0.0763
+  THE NEW VALUES ARE-       0.221699998       7.63000026E-02
+ ******************************************************
+
+  INPUT THE ANGLE BY WHICH THIS SECTION WILL BE TWISTED IN THE CLOCKWISE DIRECTION, IN DEGREES.
+0
+
+  STAGE No            1 STATOR  ROW NUMBER           1 SECTION No           2
+  INCIDENCE ANGLE =   -2.00000000
+  DEVIATION ANGLE =    5.00000000
+  BLADE INLET METAL ANGLE =   -1.91284943
+  BLADE EXIT METAL ANGLE  =    77.4165649
+ ******************************************************
+  STAGE NUMBER           1  SECTION NUMBER            2
+  INPUT NEW VALUES OF "TKMAX" AND "XTKMAX" FOR A STATOR
+  THE CURRENT VALUES ARE-   0.300000012      0.449999988
+  PRESS "A" TO ACCEPT THESE OR TYPE IN NEW VALUES.
+0.216,0.0758
+  THE NEW VALUES ARE-       0.216000006       7.58000016E-02
+ ******************************************************
+
+  INPUT THE ANGLE BY WHICH THIS SECTION WILL BE TWISTED IN THE CLOCKWISE DIRECTION, IN DEGREES.
+-1.8313
+
+  STAGE No            1 STATOR  ROW NUMBER           1 SECTION No           3
+  INCIDENCE ANGLE =   -2.00000000
+  DEVIATION ANGLE =    5.00000000
+  BLADE INLET METAL ANGLE =   -1.83297431
+  BLADE EXIT METAL ANGLE  =    76.7367554
+ ******************************************************
+  STAGE NUMBER           1  SECTION NUMBER            3
+  INPUT NEW VALUES OF "TKMAX" AND "XTKMAX" FOR A STATOR
+  THE CURRENT VALUES ARE-   0.300000012      0.449999988
+  PRESS "A" TO ACCEPT THESE OR TYPE IN NEW VALUES.
+0.2097,0.0753
+  THE NEW VALUES ARE-       0.209700003       7.53000006E-02
+ ******************************************************
+
+  INPUT THE ANGLE BY WHICH THIS SECTION WILL BE TWISTED IN THE CLOCKWISE DIRECTION, IN DEGREES.
+-3.5254
+
+  STAGE No            1 ROTOR  ROW NUMBER           2 SECTION No           1
+  INCIDENCE ANGLE =   -2.00000000
+  DEVIATION ANGLE =    5.00000000
+  BLADE INLET METAL ANGLE =    40.9795341
+  BLADE EXIT METAL ANGLE  =   -73.0569763
+
+ *********************************************************************************************
+ *********************************************************************************************
+ STAGE NUMBER           1  ROW NUMBER           2  THIS IS A ROTOR
+ *********************************************************************************************
+ *********************************************************************************************
+
+  THE CURRENT VALUES WERE OF BLADE THICKNESS AND POINT OF MAXIMUM THICKNESS ARE:
+ SECTION No.    1  MAX THICKNESS, POSITION OF MAX THICKNESS      0.2500      0.4000
+ SECTION No.    2  MAX THICKNESS, POSITION OF MAX THICKNESS      0.2500      0.4000
+ SECTION No.    3  MAX THICKNESS, POSITION OF MAX THICKNESS      0.2500      0.4000
+
+ DO YOU WANT TO ACCEPT THESE ? ANSWER "Y"  or  "N".
+n
+ ANSTK = N
+ ******************************************************
+  STAGE NUMBER            1  SECTION NUMBER            1
+  INPUT NEW VALUES OF "TKMAX"  AND "XTKMAX" FOR A ROTOR
+  THE CURRENT VALUES ARE-   0.250000000      0.400000006
+  PRESS "A" TO ACCEPT THESE OR TYPE IN NEW VALUES.
+0.3591,0.0845
+  THE NEW VALUES ARE-       0.359100014       8.44999999E-02
+ ******************************************************
+
+  INPUT THE ANGLE BY WHICH THIS SECTION WILL BE TWISTED IN THE CLOCKWISE DIRECTION, IN DEGREES.
+0
+
+  STAGE No            1 ROTOR  ROW NUMBER           2 SECTION No           2
+  INCIDENCE ANGLE =   -2.00000000
+  DEVIATION ANGLE =    5.00000000
+  BLADE INLET METAL ANGLE =    28.5763168
+  BLADE EXIT METAL ANGLE  =   -73.5906525
+ ******************************************************
+  STAGE NUMBER            1  SECTION NUMBER            2
+  INPUT NEW VALUES OF "TKMAX"  AND "XTKMAX" FOR A ROTOR
+  THE CURRENT VALUES ARE-   0.250000000      0.400000006
+  PRESS "A" TO ACCEPT THESE OR TYPE IN NEW VALUES.
+0.3133,0.0357
+  THE NEW VALUES ARE-       0.313300014       3.57000008E-02
+ ******************************************************
+
+  INPUT THE ANGLE BY WHICH THIS SECTION WILL BE TWISTED IN THE CLOCKWISE DIRECTION, IN DEGREES.
+5.4919
+
+  STAGE No            1 ROTOR  ROW NUMBER           2 SECTION No           3
+  INCIDENCE ANGLE =   -2.00000000
+  DEVIATION ANGLE =    5.00000000
+  BLADE INLET METAL ANGLE =    13.4971399
+  BLADE EXIT METAL ANGLE  =   -74.1255035
+ ******************************************************
+  STAGE NUMBER            1  SECTION NUMBER            3
+  INPUT NEW VALUES OF "TKMAX"  AND "XTKMAX" FOR A ROTOR
+  THE CURRENT VALUES ARE-   0.250000000      0.400000006
+  PRESS "A" TO ACCEPT THESE OR TYPE IN NEW VALUES.
+0.24,0.0392
+  THE NEW VALUES ARE-       0.239999995       3.92000005E-02
+ ******************************************************
+
+  INPUT THE ANGLE BY WHICH THIS SECTION WILL BE TWISTED IN THE CLOCKWISE DIRECTION, IN DEGREES.
+9.1549
+
+  STAGE No            2 STATOR  ROW NUMBER           3 SECTION No           1
+  INCIDENCE ANGLE =   -2.00000000
+  DEVIATION ANGLE =    5.00000000
+  BLADE INLET METAL ANGLE =    9.50000000
+  BLADE EXIT METAL ANGLE  =    74.0000076
+
+ *********************************************************************************************
+ *********************************************************************************************
+ STAGE NUMBER           2  ROW NUMBER           3  THIS IS A STATOR
+ *********************************************************************************************
+ *********************************************************************************************
+
+  THE CURRENT VALUES WERE OF BLADE THICKNESS AND POINT OF MAXIMUM THICKNESS ARE:
+ SECTION No.    1  MAX THICKNESS, POSITION OF MAX THICKNESS      0.2217      0.0763
+ SECTION No.    2  MAX THICKNESS, POSITION OF MAX THICKNESS      0.2160      0.0758
+ SECTION No.    3  MAX THICKNESS, POSITION OF MAX THICKNESS      0.2097      0.0753
+
+ DO YOU WANT TO ACCEPT THESE ? ANSWER "Y"  or  "N".
+n
+ ANSTK = N
+ ******************************************************
+  STAGE NUMBER           2  SECTION NUMBER            1
+  INPUT NEW VALUES OF "TKMAX" AND "XTKMAX" FOR A STATOR
+  THE CURRENT VALUES ARE-   0.221699998       7.63000026E-02
+  PRESS "A" TO ACCEPT THESE OR TYPE IN NEW VALUES.
+0.2697,0.1016
+  THE NEW VALUES ARE-       0.269699991      0.101599999
+ ******************************************************
+
+  INPUT THE ANGLE BY WHICH THIS SECTION WILL BE TWISTED IN THE CLOCKWISE DIRECTION, IN DEGREES.
+0
+
+  STAGE No            2 STATOR  ROW NUMBER           3 SECTION No           2
+  INCIDENCE ANGLE =   -2.00000000
+  DEVIATION ANGLE =    5.00000000
+  BLADE INLET METAL ANGLE =    8.82368374
+  BLADE EXIT METAL ANGLE  =    72.5966263
+ ******************************************************
+  STAGE NUMBER           2  SECTION NUMBER            2
+  INPUT NEW VALUES OF "TKMAX" AND "XTKMAX" FOR A STATOR
+  THE CURRENT VALUES ARE-   0.216000006       7.58000016E-02
+  PRESS "A" TO ACCEPT THESE OR TYPE IN NEW VALUES.
+0.2533,0.0771
+  THE NEW VALUES ARE-       0.253300011       7.71000013E-02
+ ******************************************************
+
+  INPUT THE ANGLE BY WHICH THIS SECTION WILL BE TWISTED IN THE CLOCKWISE DIRECTION, IN DEGREES.
+-0.5937
+
+  STAGE No            2 STATOR  ROW NUMBER           3 SECTION No           3
+  INCIDENCE ANGLE =   -2.00000000
+  DEVIATION ANGLE =    5.00000000
+  BLADE INLET METAL ANGLE =    8.23664188
+  BLADE EXIT METAL ANGLE  =    71.2144699
+ ******************************************************
+  STAGE NUMBER           2  SECTION NUMBER            3
+  INPUT NEW VALUES OF "TKMAX" AND "XTKMAX" FOR A STATOR
+  THE CURRENT VALUES ARE-   0.209700003       7.53000006E-02
+  PRESS "A" TO ACCEPT THESE OR TYPE IN NEW VALUES.
+0.2486,0.0987
+  THE NEW VALUES ARE-       0.248600006       9.87000018E-02
+ ******************************************************
+
+  INPUT THE ANGLE BY WHICH THIS SECTION WILL BE TWISTED IN THE CLOCKWISE DIRECTION, IN DEGREES.
+-1.1870
+
+  STAGE No            2 ROTOR  ROW NUMBER           4 SECTION No           1
+  INCIDENCE ANGLE =   -2.00000000
+  DEVIATION ANGLE =    5.00000000
+  BLADE INLET METAL ANGLE =    28.4077740
+  BLADE EXIT METAL ANGLE  =   -67.3042297
+
+ *********************************************************************************************
+ *********************************************************************************************
+ STAGE NUMBER           2  ROW NUMBER           4  THIS IS A ROTOR
+ *********************************************************************************************
+ *********************************************************************************************
+
+  THE CURRENT VALUES WERE OF BLADE THICKNESS AND POINT OF MAXIMUM THICKNESS ARE:
+ SECTION No.    1  MAX THICKNESS, POSITION OF MAX THICKNESS      0.3591      0.0845
+ SECTION No.    2  MAX THICKNESS, POSITION OF MAX THICKNESS      0.3133      0.0357
+ SECTION No.    3  MAX THICKNESS, POSITION OF MAX THICKNESS      0.2400      0.0392
+
+ DO YOU WANT TO ACCEPT THESE ? ANSWER "Y"  or  "N".
+n
+ ANSTK = N
+ ******************************************************
+  STAGE NUMBER            2  SECTION NUMBER            1
+  INPUT NEW VALUES OF "TKMAX"  AND "XTKMAX" FOR A ROTOR
+  THE CURRENT VALUES ARE-   0.359100014       8.44999999E-02
+  PRESS "A" TO ACCEPT THESE OR TYPE IN NEW VALUES.
+0.2377,0.1494
+  THE NEW VALUES ARE-       0.237700000      0.149399996
+ ******************************************************
+
+  INPUT THE ANGLE BY WHICH THIS SECTION WILL BE TWISTED IN THE CLOCKWISE DIRECTION, IN DEGREES.
+0
+
+  STAGE No            2 ROTOR  ROW NUMBER           4 SECTION No           2
+  INCIDENCE ANGLE =   -2.00000000
+  DEVIATION ANGLE =    5.00000000
+  BLADE INLET METAL ANGLE =    3.07118940
+  BLADE EXIT METAL ANGLE  =   -69.4058838
+ ******************************************************
+  STAGE NUMBER            2  SECTION NUMBER            2
+  INPUT NEW VALUES OF "TKMAX"  AND "XTKMAX" FOR A ROTOR
+  THE CURRENT VALUES ARE-   0.313300014       3.57000008E-02
+  PRESS "A" TO ACCEPT THESE OR TYPE IN NEW VALUES.
+0.1998,0.2305
+  THE NEW VALUES ARE-       0.199800000      0.230499998
+ ******************************************************
+
+  INPUT THE ANGLE BY WHICH THIS SECTION WILL BE TWISTED IN THE CLOCKWISE DIRECTION, IN DEGREES.
+8.6652
+
+  STAGE No            2 ROTOR  ROW NUMBER           4 SECTION No           3
+  INCIDENCE ANGLE =   -2.00000000
+  DEVIATION ANGLE =    5.00000000
+  BLADE INLET METAL ANGLE =   -21.4076099
+  BLADE EXIT METAL ANGLE  =   -71.1644821
+ ******************************************************
+  STAGE NUMBER            2  SECTION NUMBER            3
+  INPUT NEW VALUES OF "TKMAX"  AND "XTKMAX" FOR A ROTOR
+  THE CURRENT VALUES ARE-   0.239999995       3.92000005E-02
+  PRESS "A" TO ACCEPT THESE OR TYPE IN NEW VALUES.
+0.1506,0.2597
+  THE NEW VALUES ARE-       0.150600001      0.259700000
+ ******************************************************
+
+  INPUT THE ANGLE BY WHICH THIS SECTION WILL BE TWISTED IN THE CLOCKWISE DIRECTION, IN DEGREES.
+18.4135
+
+  DESIGN NOW COMPLETED.
+
+
+  FILE "stagen.dat" WRITTEN AS INPUT TO PROGRAM "stagen".
+
+  FILE "meangen.out" IS A COPY OF THE INPUT JUST USED.
+
+
